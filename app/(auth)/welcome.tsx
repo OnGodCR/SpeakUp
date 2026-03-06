@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
   mascotSection: {
     alignItems: 'center',
     marginBottom: 32,
+    backgroundColor: Theme.background,
   },
   mascotBase: {
     position: 'absolute',
@@ -72,11 +73,17 @@ const styles = StyleSheet.create({
     width: 220,
     height: 24,
     borderRadius: 12,
-    backgroundColor: Theme.surface,
-    opacity: 0.6,
+    backgroundColor: Theme.background,
+    opacity: 0.4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 2,
   },
   mascotWrap: {
     marginBottom: 8,
+    backgroundColor: Theme.background,
   },
   brandName: {
     fontSize: 32,
