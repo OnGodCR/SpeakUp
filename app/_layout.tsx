@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Linking, Platform } from 'react-native';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import { createSessionFromUrl } from '../lib/auth';
 import {
   useFonts,
   Nunito_600SemiBold,
@@ -36,6 +37,25 @@ export default function RootLayout() {
   useEffect(() => {
     initialize();
   }, []);
+
+  // Handle OAuth redirect when app is opened from cold start (e.g. native deep link)
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+
+    const handleUrl = async (url: string | null) => {
+      if (!url || !url.includes('access_token')) return;
+      try {
+        await createSessionFromUrl(url);
+        router.replace('/(tabs)');
+      } catch {
+        // Invalid or expired; user can try again from sign-in
+      }
+    };
+
+    Linking.getInitialURL().then(handleUrl);
+    const sub = Linking.addEventListener('url', (e) => handleUrl(e.url));
+    return () => sub.remove();
+  }, [router]);
 
   useEffect(() => {
     if (isLoading) return;

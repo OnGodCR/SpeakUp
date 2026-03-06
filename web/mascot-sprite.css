@@ -1,0 +1,61 @@
+/**
+ * SpeakUp Mascot — CSS Sprite Sheet
+ * Single row, 3 frames: pose-friendly | pose-analytical | pose-celebratory
+ * Use .speakup-mascot + one modifier: .pose-friendly, .pose-analytical, .pose-celebratory
+ */
+
+/* ---- Base container: viewport for ONE frame ---- */
+.speakup-mascot {
+  display: inline-block;
+  width: 280px;
+  max-width: 90vw;
+  height: 373px; /* ~4:5 aspect per frame; calibrate to your sheet */
+  max-height: 55vw;
+  background-image: url('../assets/speakup-mascot-sheet.png');
+  background-repeat: no-repeat;
+  background-size: 300% 100%; /* 3 frames wide */
+  background-position: 0 0;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Responsive: scale down on small screens, keep aspect ratio */
+@media (max-width: 480px) {
+  .speakup-mascot {
+    width: 220px;
+    height: 293px;
+  }
+}
+
+/* ---- Optional label below mascot ---- */
+.speakup-mascot__label {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: #8899AA;
+  text-align: center;
+  max-width: 280px;
+}
+
+.speakup-mascot__label-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.25rem;
+}
+
+/* ---- Modifier classes: which frame is visible ---- */
+/* Left third: Waving / Friendly */
+.speakup-mascot.pose-friendly {
+  background-position: 0 0;
+}
+
+/* Middle third: Thinking / Analytical */
+.speakup-mascot.pose-analytical {
+  background-position: -33.333% 0;
+}
+
+/* Right third: Sunglasses & flexing / Celebratory */
+.speakup-mascot.pose-celebratory {
+  background-position: -66.666% 0;
+}

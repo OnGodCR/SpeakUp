@@ -66,8 +66,9 @@ export default function SignInScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.title}>Welcome back</Text>
           <Text style={styles.subtitle}>Sign in to continue your streak</Text>
 
           <TextInput
@@ -121,13 +122,13 @@ export default function SignInScreen() {
             labelStyle={styles.signInButtonLabel}
             buttonColor={Theme.primary}
           >
-            Sign In
+            Sign in
           </Button>
 
           <Pressable onPress={() => router.push('/(auth)/sign-up' as any)}>
             <Text style={styles.signUpLink}>
               Don't have an account?{' '}
-              <Text style={styles.signUpLinkBold}>Sign Up</Text>
+              <Text style={styles.signUpLinkBold}>Sign up</Text>
             </Text>
           </Pressable>
         </ScrollView>
@@ -155,53 +156,62 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 32,
-    paddingTop: 48,
-    paddingBottom: 32,
+    paddingHorizontal: 28,
+    paddingTop: 40,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
     color: Theme.text,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     color: Theme.muted,
-    marginTop: 4,
     marginBottom: 32,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 20,
     backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.bubbly,
   },
   googleButton: {
     marginTop: 8,
-    borderColor: Theme.muted,
-    borderRadius: 14,
-    paddingVertical: 4,
+    marginBottom: 20,
+    borderColor: Theme.primary,
+    borderRadius: Theme.radius.bubblyButton,
+    paddingVertical: 8,
   },
   googleButtonLabel: {
-    color: Theme.text,
+    color: Theme.primary,
     fontSize: 16,
+    fontWeight: '700',
   },
   signInButton: {
-    marginTop: 16,
-    borderRadius: 14,
-    paddingVertical: 4,
+    borderRadius: Theme.radius.bubblyButton,
+    paddingVertical: 8,
+    shadowColor: Theme.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   signInButtonLabel: {
     color: Theme.text,
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
   },
   signUpLink: {
     textAlign: 'center',
-    marginTop: 24,
-    fontSize: 14,
+    marginTop: 28,
+    fontSize: 15,
     color: Theme.muted,
   },
   signUpLinkBold: {
     color: Theme.primary,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
 });

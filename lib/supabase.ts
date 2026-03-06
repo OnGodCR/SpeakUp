@@ -22,6 +22,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: Platform.OS !== 'web' ? ExpoSecureStoreAdapter : undefined,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    // On web, Supabase redirects back with tokens in the URL hash; we need to read them.
+    detectSessionInUrl: Platform.OS === 'web',
   },
 });

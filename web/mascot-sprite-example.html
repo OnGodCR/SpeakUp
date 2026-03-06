@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeakUp Mascot Sprite — Example</title>
+  <link rel="stylesheet" href="mascot-sprite.css" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0F1624;
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+    .mascot-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .mascot-label-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .mascot-label-body { font-size: 0.875rem; color: #8899AA; text-align: center; max-width: 280px; }
+    .pose-buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .pose-buttons button {
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      background: #1E2A3B;
+      color: #fff;
+    }
+    .pose-buttons button:hover { background: #2BBFB0; color: #0F1624; }
+    .pose-buttons button.active { background: #FF6B35; color: #fff; }
+  </style>
+</head>
+<body>
+  <!-- 1) Static implementation: one pose + labels -->
+  <section class="mascot-demo" aria-label="Mascot example">
+    <div id="mascot" class="speakup-mascot pose-analytical" role="img" aria-label="Speaky mascot, analytical pose"></div>
+    <div class="speakup-mascot__label">
+      <div class="mascot-label-title" id="label-title">ANALYZING...</div>
+      <div class="mascot-label-body" id="label-body">Did I hear that pause?</div>
+    </div>
+
+    <div class="pose-buttons">
+      <button type="button" data-pose="friendly">Friendly</button>
+      <button type="button" data-pose="analytical" class="active">Analytical</button>
+      <button type="button" data-pose="celebratory">Celebratory</button>
+    </div>
+  </section>
+
+  <script>
+    const POSE_LABELS = {
+      friendly:   { title: 'WELCOME!', body: 'Speaky is ready to help you shine!' },
+      analytical: { title: 'ANALYZING...', body: 'Did I hear that pause?' },
+      celebratory: { title: 'PERFECT!', body: 'You crushed it, Rockstar!' }
+    };
+
+    function setMascotPose(poseName) {
+      const el = document.getElementById('mascot');
+      if (!el) return;
+
+      const valid = ['friendly', 'analytical', 'celebratory'];
+      const pose = valid.includes(poseName) ? poseName : 'friendly';
+
+      el.classList.remove('pose-friendly', 'pose-analytical', 'pose-celebratory');
+      el.classList.add('pose-' + pose);
+
+      const titleEl = document.getElementById('label-title');
+      const bodyEl = document.getElementById('label-body');
+      if (titleEl && bodyEl && POSE_LABELS[pose]) {
+        titleEl.textContent = POSE_LABELS[pose].title;
+        bodyEl.textContent = POSE_LABELS[pose].body;
+      }
+    }
+
+    document.querySelectorAll('.pose-buttons button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pose = btn.getAttribute('data-pose');
+        setMascotPose(pose);
+        document.querySelectorAll('.pose-buttons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

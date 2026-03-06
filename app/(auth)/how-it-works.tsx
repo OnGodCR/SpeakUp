@@ -1,23 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import SpeakyMascot from '../../components/SpeakyMascot';
 import { Theme } from '../../constants/colors';
 
 const STEPS = [
   {
     emoji: '\uD83C\uDFAF',
-    title: 'Get a Topic',
+    title: 'Get a topic',
     description: 'Receive a daily speaking challenge',
   },
   {
     emoji: '\uD83C\uDFA4',
-    title: 'Speak for 5 Minutes',
+    title: 'Speak for 5 minutes',
     description: 'Record your impromptu speech',
   },
   {
     emoji: '\uD83D\uDCCA',
-    title: 'Get Your Score',
+    title: 'Get your score',
     description: 'AI-powered feedback on your performance',
   },
 ];
@@ -27,12 +28,23 @@ export default function HowItWorksScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.heading}>How It Works</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.topSection}>
+          <View style={styles.mascotWrap}>
+            <SpeakyMascot pose="thinking" scale={0.45} />
+          </View>
+          <Text style={styles.heading}>How it works</Text>
+          <Text style={styles.subheading}>
+            Three steps to a stronger voice
+          </Text>
+        </View>
 
         <View style={styles.stepsContainer}>
           {STEPS.map((step, index) => (
-            <View key={index} style={styles.stepRow}>
+            <View key={index} style={styles.stepCard}>
               <View style={styles.emojiContainer}>
                 <Text style={styles.emoji}>{step.emoji}</Text>
               </View>
@@ -43,14 +55,17 @@ export default function HowItWorksScreen() {
             </View>
           ))}
         </View>
-      </View>
+      </ScrollView>
 
       <View style={styles.bottomContainer}>
         <Pressable
-          style={styles.button}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.buttonPressed,
+          ]}
           onPress={() => router.push('/(auth)/sign-up')}
         >
-          <Text style={styles.buttonText}>I'm Ready</Text>
+          <Text style={styles.buttonText}>I'm ready</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -62,33 +77,53 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Theme.background,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 32,
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 28,
+    paddingTop: 24,
+    paddingBottom: 24,
+  },
+  topSection: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  mascotWrap: {
+    marginBottom: 20,
   },
   heading: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
     color: Theme.text,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 8,
+  },
+  subheading: {
+    fontSize: 16,
+    color: Theme.muted,
+    textAlign: 'center',
   },
   stepsContainer: {
-    gap: 28,
   },
-  stepRow: {
+  stepCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.bubbly,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   emojiContainer: {
     width: 56,
     height: 56,
-    borderRadius: 16,
-    backgroundColor: Theme.surface,
+    borderRadius: 28,
+    backgroundColor: Theme.background,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: 18,
   },
   emoji: {
     fontSize: 28,
@@ -98,28 +133,39 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: Theme.text,
     marginBottom: 4,
   },
   stepDescription: {
     fontSize: 14,
     color: Theme.muted,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   bottomContainer: {
-    paddingHorizontal: 32,
-    paddingBottom: 32,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    paddingTop: 16,
   },
   button: {
     backgroundColor: Theme.primary,
-    borderRadius: 14,
-    paddingVertical: 16,
+    borderRadius: Theme.radius.bubblyButton,
+    paddingVertical: 18,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Theme.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  buttonPressed: {
+    opacity: 0.9,
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
     color: Theme.text,
   },
 });

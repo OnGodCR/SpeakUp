@@ -34,6 +34,9 @@ export const Theme = {
     card: 16,
     button: 14,
     pill: 999,
+    /** Onboarding: extra-rounded "bubbly" elements */
+    bubbly: 24,
+    bubblyButton: 28,
   },
   progressBarHeight: 12,
   /** Glow for progress fill (e.g. shadow) */

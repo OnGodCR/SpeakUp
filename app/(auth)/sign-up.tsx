@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput, Button, Snackbar, Text } from 'react-native-paper';
 import { useRouter } from 'expo-router';
@@ -76,8 +83,23 @@ export default function SignUpScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.title}>Create account</Text>
+          <Text style={styles.subtitle}>
+            Join SpeakUp and start your first challenge
+          </Text>
+
+          <TextInput
+            label="Display name"
+            value={displayName}
+            onChangeText={setDisplayName}
+            mode="outlined"
+            autoCapitalize="words"
+            style={styles.input}
+            outlineColor={Theme.muted}
+            activeOutlineColor={Theme.accent}
+          />
 
           <TextInput
             label="Email"
@@ -110,22 +132,11 @@ export default function SignUpScreen() {
           />
 
           <TextInput
-            label="Display Name"
-            value={displayName}
-            onChangeText={setDisplayName}
-            mode="outlined"
-            autoCapitalize="words"
-            style={styles.input}
-            outlineColor={Theme.muted}
-            activeOutlineColor={Theme.accent}
-          />
-
-          <TextInput
-            label="Notification Time"
+            label="Notification time (optional)"
             value={notificationTime}
             onChangeText={setNotificationTime}
             mode="outlined"
-            placeholder="08:00 AM"
+            placeholder="e.g. 08:00 AM"
             style={styles.input}
             outlineColor={Theme.muted}
             activeOutlineColor={Theme.accent}
@@ -152,12 +163,13 @@ export default function SignUpScreen() {
             labelStyle={styles.createButtonLabel}
             buttonColor={Theme.primary}
           >
-            Create Account
+            Create account
           </Button>
 
           <Pressable onPress={() => router.push('/(auth)/sign-in' as any)}>
             <Text style={styles.signInLink}>
-              Already have an account? <Text style={styles.signInLinkBold}>Sign In</Text>
+              Already have an account?{' '}
+              <Text style={styles.signInLinkBold}>Sign in</Text>
             </Text>
           </Pressable>
         </ScrollView>
@@ -185,48 +197,62 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 32,
-    paddingTop: 24,
-    paddingBottom: 32,
+    paddingHorizontal: 28,
+    paddingTop: 32,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
     color: Theme.text,
-    marginBottom: 32,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: Theme.muted,
+    marginBottom: 28,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 20,
     backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.bubbly,
   },
   googleButton: {
     marginTop: 8,
-    borderColor: Theme.muted,
-    borderRadius: 14,
-    paddingVertical: 4,
+    marginBottom: 20,
+    borderColor: Theme.primary,
+    borderRadius: Theme.radius.bubblyButton,
+    paddingVertical: 8,
   },
   googleButtonLabel: {
-    color: Theme.text,
+    color: Theme.primary,
     fontSize: 16,
+    fontWeight: '700',
   },
   createButton: {
-    marginTop: 16,
-    borderRadius: 14,
-    paddingVertical: 4,
+    borderRadius: Theme.radius.bubblyButton,
+    paddingVertical: 8,
+    shadowColor: Theme.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   createButtonLabel: {
     color: Theme.text,
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
   },
   signInLink: {
     textAlign: 'center',
-    marginTop: 24,
-    fontSize: 14,
+    marginTop: 28,
+    fontSize: 15,
     color: Theme.muted,
   },
   signInLinkBold: {
     color: Theme.primary,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
 });
