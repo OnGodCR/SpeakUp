@@ -16,18 +16,11 @@ import Animated, {
 import Timer from '../../components/Timer';
 import { useChallengeStore } from '../../stores/challengeStore';
 import { setupRecording, stopRecording } from '../../lib/audio';
+import { Theme } from '../../constants/colors';
 
-const COLORS = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  white: '#FFFFFF',
-};
-
-const RECORD_SECONDS = 300; // 5 minutes
-const MIN_RECORD_SECONDS = 60; // minimum before "Stop Early" is enabled
-const HAPTIC_AT_REMAINING = [60, 10]; // trigger haptic at 1:00 and 0:10 remaining
+const RECORD_SECONDS = 300;
+const MIN_RECORD_SECONDS = 60;
+const HAPTIC_AT_REMAINING = [60, 10];
 const NUM_BARS = 20;
 
 export default function RecordScreen() {
@@ -41,12 +34,10 @@ export default function RecordScreen() {
   const elapsedRef = useRef(0);
   const hapticFiredRef = useRef(new Set<number>());
 
-  // Waveform bar heights
   const [barHeights, setBarHeights] = useState<number[]>(
     () => Array.from({ length: NUM_BARS }, () => Math.random() * 0.6 + 0.2),
   );
 
-  // Pulsing red circle animation
   const pulseScale = useSharedValue(1);
   const pulseOpacity = useSharedValue(0.6);
 
@@ -74,7 +65,6 @@ export default function RecordScreen() {
     opacity: pulseOpacity.value,
   }));
 
-  // Track elapsed time for "Stop Early" button
   useEffect(() => {
     const interval = setInterval(() => {
       setElapsed((prev) => {
@@ -86,7 +76,6 @@ export default function RecordScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Animate waveform bars
   useEffect(() => {
     const interval = setInterval(() => {
       setBarHeights(
@@ -96,7 +85,6 @@ export default function RecordScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Haptic feedback at specific remaining-time thresholds
   useEffect(() => {
     const remaining = RECORD_SECONDS - elapsed;
     for (const threshold of HAPTIC_AT_REMAINING) {
@@ -107,7 +95,6 @@ export default function RecordScreen() {
     }
   }, [elapsed]);
 
-  // Start recording on mount
   useEffect(() => {
     let mounted = true;
 
@@ -124,7 +111,6 @@ export default function RecordScreen() {
 
     return () => {
       mounted = false;
-      // Cleanup: stop recording if still active when unmounting
       if (recordingRef.current) {
         recordingRef.current.stopAndUnloadAsync().catch(() => {});
       }
@@ -139,7 +125,6 @@ export default function RecordScreen() {
       const { uri, duration } = await stopRecording(recordingRef.current);
       recordingRef.current = null;
 
-      // Navigate first, then submit in background
       router.push('/challenge/processing');
       submitSpeech(uri, duration);
     } catch (err) {
@@ -156,14 +141,12 @@ export default function RecordScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Topic reference */}
       <View style={styles.topicContainer}>
         <Text style={styles.topicText} numberOfLines={2}>
           {challenge?.topic ?? ''}
         </Text>
       </View>
 
-      {/* Recording indicator */}
       <View style={styles.indicatorContainer}>
         <View style={styles.indicatorWrapper}>
           <Animated.View style={[styles.pulseRing, pulseStyle]} />
@@ -172,7 +155,6 @@ export default function RecordScreen() {
         <Text style={styles.recordingLabel}>Recording</Text>
       </View>
 
-      {/* Timer */}
       <View style={styles.timerContainer}>
         <Timer
           totalSeconds={RECORD_SECONDS}
@@ -181,7 +163,6 @@ export default function RecordScreen() {
         />
       </View>
 
-      {/* Waveform */}
       <View style={styles.waveformContainer}>
         {barHeights.map((height, index) => (
           <View
@@ -190,21 +171,19 @@ export default function RecordScreen() {
               styles.waveBar,
               {
                 height: height * 60,
-                backgroundColor:
-                  height > 0.6 ? COLORS.accent : COLORS.primary,
+                backgroundColor: Theme.accent,
               },
             ]}
           />
         ))}
       </View>
 
-      {/* Stop button */}
       <View style={styles.buttonContainer}>
         <Button
           mode="outlined"
           onPress={handleStop}
           disabled={!canStopEarly || isStopping}
-          textColor={canStopEarly ? COLORS.white : COLORS.gray}
+          textColor={canStopEarly ? Theme.text : Theme.muted}
           style={[
             styles.stopButton,
             !canStopEarly && styles.stopButtonDisabled,
@@ -226,7 +205,7 @@ export default function RecordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.dark,
+    backgroundColor: Theme.background,
     paddingHorizontal: 24,
   },
   topicContainer: {
@@ -235,7 +214,7 @@ const styles = StyleSheet.create({
   },
   topicText: {
     fontSize: 16,
-    color: COLORS.gray,
+    color: Theme.muted,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -244,29 +223,29 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   indicatorWrapper: {
-    width: 80,
-    height: 80,
+    width: 88,
+    height: 88,
     justifyContent: 'center',
     alignItems: 'center',
   },
   pulseRing: {
     position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#EF4444',
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: Theme.primary,
   },
   recordDot: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#EF4444',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Theme.primary,
   },
   recordingLabel: {
     marginTop: 12,
     fontSize: 14,
-    fontWeight: '600',
-    color: '#EF4444',
+    fontWeight: '700',
+    color: Theme.primary,
     textTransform: 'uppercase',
     letterSpacing: 2,
   },
@@ -280,11 +259,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 80,
     marginTop: 40,
-    gap: 3,
+    gap: 4,
   },
   waveBar: {
-    width: 4,
-    borderRadius: 2,
+    width: 5,
+    borderRadius: 3,
     minHeight: 4,
   },
   buttonContainer: {
@@ -294,21 +273,22 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   stopButton: {
-    borderColor: 'rgba(255,255,255,0.3)',
-    borderRadius: 12,
+    borderColor: Theme.muted,
+    borderRadius: Theme.radius.button,
     minWidth: 200,
+    paddingVertical: 8,
   },
   stopButtonDisabled: {
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: Theme.muted + '60',
   },
   buttonLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     paddingVertical: 4,
   },
   minTimeHint: {
     fontSize: 12,
-    color: COLORS.gray,
+    color: Theme.muted,
     marginTop: 8,
   },
 });

@@ -1,19 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-};
+import { Theme } from '../constants/colors';
 
 const MOOD_COLORS: Record<string, string> = {
-  happy: '#E8D5FF',
-  thinking: '#D5E8FF',
-  sad: '#FFD5D5',
-  excited: '#FFE0CC',
+  happy: 'rgba(43, 191, 176, 0.2)',
+  thinking: 'rgba(43, 191, 176, 0.15)',
+  sad: 'rgba(239, 68, 68, 0.15)',
+  excited: 'rgba(255, 107, 53, 0.2)',
 };
 
 type Props = {
@@ -44,6 +38,7 @@ export default function Speaky({ message, mood = 'happy', size = 'large' }: Prop
             height: circleSize,
             borderRadius: circleSize / 2,
             backgroundColor: bgColor,
+            borderColor: Theme.accent,
           },
         ]}
       >
@@ -61,28 +56,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: BRAND.primary,
   },
   bubble: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 12,
     marginBottom: 12,
-    maxWidth: 240,
+    maxWidth: 280,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    elevation: 2,
+    borderColor: Theme.cardBorderTint,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
   },
   bubbleText: {
-    fontSize: 14,
-    color: BRAND.dark,
+    fontSize: 15,
+    color: Theme.text,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   bubbleTail: {
     position: 'absolute',
@@ -97,6 +91,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: '#FFFFFF',
+    borderTopColor: Theme.surface,
   },
 });

@@ -2,14 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 const STEPS = [
   {
@@ -67,7 +60,7 @@ export default function HowItWorksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BRAND.white,
+    backgroundColor: Theme.background,
   },
   content: {
     flex: 1,
@@ -77,7 +70,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: BRAND.dark,
+    color: Theme.text,
     textAlign: 'center',
     marginBottom: 40,
   },
@@ -92,7 +85,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 16,
-    backgroundColor: '#F3F0FF',
+    backgroundColor: Theme.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -106,12 +99,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: BRAND.dark,
+    color: Theme.text,
     marginBottom: 4,
   },
   stepDescription: {
     fontSize: 14,
-    color: BRAND.gray,
+    color: Theme.muted,
     lineHeight: 20,
   },
   bottomContainer: {
@@ -119,14 +112,14 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   button: {
-    backgroundColor: BRAND.primary,
-    borderRadius: 28,
+    backgroundColor: Theme.primary,
+    borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
   },
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: BRAND.white,
+    color: Theme.text,
   },
 });

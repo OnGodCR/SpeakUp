@@ -19,15 +19,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import { getXpProgress } from '../../constants/xpTable';
 import StreakBadge from '../../components/StreakBadge';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
@@ -89,12 +81,11 @@ export default function ProfileScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={BRAND.primary}
+            tintColor={Theme.primary}
           />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Header */}
         <View style={styles.profileHeader}>
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} style={styles.avatar} />
@@ -113,7 +104,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* XP Progress */}
         <View style={styles.card}>
           <View style={styles.xpHeader}>
             <Text style={styles.cardTitle}>Experience Points</Text>
@@ -127,8 +117,7 @@ export default function ProfileScreen() {
           <Text style={styles.totalXp}>{totalXp} total XP</Text>
         </View>
 
-        {/* Stats */}
-        <View style={styles.statsRow}>
+        <View style={styles.statsGrid}>
           <View style={styles.statBox}>
             <StreakBadge streak={streak} size="small" />
             <Text style={styles.statValue}>{streak}</Text>
@@ -141,7 +130,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Streak Shield */}
         {profile?.streak_shield_available ? (
           <View style={styles.shieldCard}>
             <Text style={styles.shieldEmoji}>{'🛡️'}</Text>
@@ -154,14 +142,13 @@ export default function ProfileScreen() {
           </View>
         ) : null}
 
-        {/* Sign Out */}
         <Button
           mode="outlined"
           onPress={handleSignOut}
           loading={signingOut}
           disabled={signingOut}
           style={styles.signOutButton}
-          textColor={BRAND.gray}
+          textColor={Theme.muted}
         >
           Sign Out
         </Button>
@@ -173,7 +160,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: BRAND.background,
+    backgroundColor: Theme.background,
   },
   scroll: {
     flex: 1,
@@ -183,7 +170,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 
-  /* Header */
   profileHeader: {
     alignItems: 'center',
     paddingTop: 24,
@@ -193,135 +179,135 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
+    borderWidth: 2,
+    borderColor: Theme.accent,
   },
   avatarFallback: {
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: '#E8D5FF',
+    backgroundColor: Theme.surface,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Theme.accent,
   },
   avatarInitial: {
     fontSize: 36,
     fontWeight: '700',
-    color: BRAND.primary,
+    color: Theme.accent,
   },
   displayName: {
     fontSize: 24,
     fontWeight: '800',
-    color: BRAND.dark,
+    fontFamily: 'Nunito_800ExtraBold',
+    color: Theme.text,
     marginTop: 12,
   },
   email: {
     fontSize: 14,
-    color: BRAND.gray,
+    color: Theme.muted,
     marginTop: 4,
   },
   levelContainer: {
     marginTop: 12,
   },
   levelBadge: {
-    backgroundColor: BRAND.primary,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+    backgroundColor: Theme.primary,
+    borderRadius: Theme.radius.pill,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
   },
   levelText: {
-    color: BRAND.white,
+    color: Theme.text,
     fontSize: 14,
     fontWeight: '700',
   },
 
-  /* Card */
   card: {
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    padding: 16,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    padding: 18,
     marginBottom: 16,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   cardTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: BRAND.dark,
+    color: Theme.text,
   },
   xpHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   xpText: {
     fontSize: 13,
-    color: BRAND.gray,
+    color: Theme.muted,
     fontWeight: '500',
   },
   xpTrack: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#E5E7EB',
+    height: Theme.progressBarHeight,
+    borderRadius: Theme.progressBarHeight / 2,
+    backgroundColor: Theme.background,
     overflow: 'hidden',
   },
   xpFill: {
     height: '100%',
-    borderRadius: 5,
-    backgroundColor: BRAND.primary,
+    borderRadius: Theme.progressBarHeight / 2,
+    backgroundColor: Theme.primary,
   },
   totalXp: {
     fontSize: 12,
-    color: BRAND.gray,
+    color: Theme.muted,
     marginTop: 8,
     textAlign: 'right',
   },
 
-  /* Stats */
-  statsRow: {
+  statsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
+    flexWrap: 'wrap',
+    gap: 12,
     marginBottom: 16,
   },
   statBox: {
     flex: 1,
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    paddingVertical: 16,
+    minWidth: '45%',
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    paddingVertical: 18,
     alignItems: 'center',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   statEmoji: {
-    fontSize: 20,
+    fontSize: 22,
   },
   statValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: BRAND.dark,
+    color: Theme.text,
     marginTop: 4,
+    fontFamily: 'Nunito_800ExtraBold',
   },
   statLabel: {
     fontSize: 12,
-    color: BRAND.gray,
+    color: Theme.muted,
     marginTop: 4,
     fontWeight: '500',
   },
 
-  /* Shield */
   shieldCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EEF2FF',
-    borderRadius: 14,
+    backgroundColor: Theme.accent + '18',
+    borderRadius: Theme.radius.card,
     padding: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   shieldEmoji: {
     fontSize: 28,
@@ -333,18 +319,17 @@ const styles = StyleSheet.create({
   shieldTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: BRAND.dark,
+    color: Theme.text,
   },
   shieldSubtext: {
     fontSize: 13,
-    color: BRAND.gray,
+    color: Theme.muted,
     marginTop: 2,
   },
 
-  /* Sign Out */
   signOutButton: {
     marginTop: 8,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
+    borderColor: Theme.muted,
+    borderRadius: Theme.radius.button,
   },
 });

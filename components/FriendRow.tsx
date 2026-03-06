@@ -2,13 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import StreakBadge from './StreakBadge';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-};
+import { Theme } from '../constants/colors';
 
 type Props = {
   name: string;
@@ -28,6 +22,7 @@ export default function FriendRow({
   onPress,
 }: Props) {
   const initial = name.charAt(0).toUpperCase();
+  const isDone = todayScore != null;
 
   return (
     <TouchableOpacity
@@ -35,7 +30,6 @@ export default function FriendRow({
       onPress={onPress}
       activeOpacity={0.7}
     >
-      {/* Avatar */}
       {avatarUrl ? (
         <Image source={{ uri: avatarUrl }} style={styles.avatar} />
       ) : (
@@ -44,7 +38,6 @@ export default function FriendRow({
         </View>
       )}
 
-      {/* Info */}
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {name}
@@ -55,13 +48,25 @@ export default function FriendRow({
         </View>
       </View>
 
-      {/* Today's score */}
-      <View style={styles.scoreSection}>
-        {todayScore != null ? (
+      <View style={styles.chipWrap}>
+        <View
+          style={[
+            styles.statusChip,
+            isDone ? styles.chipDone : styles.chipPending,
+          ]}
+        >
+          <Text
+            style={[
+              styles.statusChipText,
+              isDone ? styles.chipDoneText : styles.chipPendingText,
+            ]}
+          >
+            {isDone ? 'Done' : 'Pending'}
+          </Text>
+        </View>
+        {isDone ? (
           <Text style={styles.todayScore}>{todayScore}</Text>
-        ) : (
-          <Text style={styles.notYet}>Not yet</Text>
-        )}
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -71,39 +76,43 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginVertical: 4,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
   },
   avatarFallback: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#E8D5FF',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Theme.background,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   avatarInitial: {
     fontSize: 18,
     fontWeight: '700',
-    color: BRAND.primary,
+    color: Theme.accent,
   },
   info: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 14,
     gap: 4,
   },
   name: {
     fontSize: 16,
-    fontWeight: '600',
-    color: BRAND.dark,
+    fontWeight: '700',
+    color: Theme.text,
   },
   metaRow: {
     flexDirection: 'row',
@@ -112,21 +121,38 @@ const styles = StyleSheet.create({
   },
   level: {
     fontSize: 12,
-    color: BRAND.gray,
+    color: Theme.muted,
     fontWeight: '500',
   },
-  scoreSection: {
+  chipWrap: {
     alignItems: 'flex-end',
-    minWidth: 50,
+    gap: 4,
+  },
+  statusChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Theme.radius.pill,
+  },
+  chipDone: {
+    backgroundColor: Theme.accent + '30',
+  },
+  chipPending: {
+    backgroundColor: Theme.muted + '25',
+  },
+  statusChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  chipDoneText: {
+    color: Theme.accent,
+  },
+  chipPendingText: {
+    color: Theme.muted,
   },
   todayScore: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '800',
-    color: BRAND.primary,
-  },
-  notYet: {
-    fontSize: 13,
-    color: BRAND.gray,
-    fontStyle: 'italic',
+    color: Theme.primary,
+    fontFamily: 'Nunito_800ExtraBold',
   },
 });

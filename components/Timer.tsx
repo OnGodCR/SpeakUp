@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-};
+import { Theme } from '../constants/colors';
 
 type Props = {
   totalSeconds: number;
@@ -33,11 +27,9 @@ export default function Timer({
   const onCompleteRef = useRef(onComplete);
   const remainingRef = useRef(remaining);
 
-  // Keep refs up to date
   onCompleteRef.current = onComplete;
   remainingRef.current = remaining;
 
-  // Reset when totalSeconds changes
   useEffect(() => {
     setRemaining(totalSeconds);
     remainingRef.current = totalSeconds;
@@ -51,7 +43,6 @@ export default function Timer({
           clearInterval(intervalRef.current);
           intervalRef.current = null;
         }
-        // Defer the callback to avoid state update during render
         setTimeout(() => onCompleteRef.current(), 0);
         return 0;
       }
@@ -88,7 +79,8 @@ export default function Timer({
           styles.time,
           {
             fontSize: isLarge ? 56 : 24,
-            color: isLow ? BRAND.accent : BRAND.dark,
+            color: isLow ? Theme.primary : Theme.text,
+            fontFamily: 'Nunito_800ExtraBold',
           },
         ]}
       >
@@ -104,7 +96,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   time: {
-    fontWeight: '700',
     fontVariant: ['tabular-nums'],
   },
 });

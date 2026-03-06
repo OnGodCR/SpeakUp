@@ -2,15 +2,24 @@ import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator } from 'react-native';
-import { PaperProvider, MD3LightTheme } from 'react-native-paper';
+import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import {
+  useFonts,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+} from '@expo-google-fonts/nunito';
 import { useAuthStore } from '../stores/authStore';
+import { Theme } from '../constants/colors';
 
 const theme = {
-  ...MD3LightTheme,
+  ...MD3DarkTheme,
   colors: {
-    ...MD3LightTheme.colors,
-    primary: '#6C3CE1',
-    secondary: '#FF6B35',
+    ...MD3DarkTheme.colors,
+    primary: Theme.primary,
+    secondary: Theme.accent,
+    background: Theme.background,
+    surface: Theme.surface,
   },
 };
 
@@ -18,6 +27,11 @@ export default function RootLayout() {
   const { session, isLoading, initialize } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
+  const [fontsLoaded] = useFonts({
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+  });
 
   useEffect(() => {
     initialize();
@@ -35,17 +49,24 @@ export default function RootLayout() {
     }
   }, [session, isLoading, segments]);
 
-  if (isLoading) {
+  if (!fontsLoaded || isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#6C3CE1' }}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: Theme.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={Theme.primary} />
       </View>
     );
   }
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />

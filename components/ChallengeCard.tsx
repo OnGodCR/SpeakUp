@@ -1,13 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, Text, Button, Chip } from 'react-native-paper';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-};
+import { Text, Button } from 'react-native-paper';
+import { Theme } from '../constants/colors';
 
 type Props = {
   topic: string;
@@ -27,17 +21,13 @@ export default function ChallengeCard({
   onViewScore,
 }: Props) {
   return (
-    <Card style={styles.card} mode="elevated">
-      <Card.Content style={styles.content}>
-        <Chip
-          style={styles.categoryChip}
-          textStyle={styles.categoryText}
-          compact
-        >
-          {category}
-        </Chip>
+    <View style={styles.card}>
+      <View style={styles.content}>
+        <View style={styles.categoryPill}>
+          <Text style={styles.categoryText}>{category}</Text>
+        </View>
 
-        <Text variant="titleMedium" style={styles.topic}>
+        <Text style={styles.topic} numberOfLines={2}>
           {topic}
         </Text>
 
@@ -51,8 +41,9 @@ export default function ChallengeCard({
               <Button
                 mode="outlined"
                 onPress={onViewScore}
-                textColor={BRAND.primary}
+                textColor={Theme.text}
                 style={styles.viewButton}
+                labelStyle={styles.buttonLabel}
               >
                 View Score
               </Button>
@@ -62,40 +53,54 @@ export default function ChallengeCard({
           <Button
             mode="contained"
             onPress={onStart}
-            buttonColor={BRAND.primary}
-            textColor="#FFFFFF"
+            buttonColor={Theme.primary}
+            textColor={Theme.text}
             style={styles.startButton}
+            labelStyle={styles.buttonLabel}
           >
             Start Challenge
           </Button>
         )}
-      </Card.Content>
-    </Card>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 8,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    marginVertical: 12,
+    borderRadius: Theme.radius.card,
+    backgroundColor: Theme.surface,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
   },
   content: {
-    gap: 12,
+    padding: 20,
+    gap: 14,
   },
-  categoryChip: {
+  categoryPill: {
     alignSelf: 'flex-start',
-    backgroundColor: '#F3F0FF',
+    backgroundColor: Theme.accent + '30',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: Theme.radius.pill,
   },
   categoryText: {
-    color: BRAND.primary,
+    color: Theme.accent,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   topic: {
-    color: BRAND.dark,
-    fontWeight: '700',
-    lineHeight: 24,
+    color: Theme.text,
+    fontSize: 20,
+    fontWeight: '800',
+    lineHeight: 28,
   },
   completedRow: {
     flexDirection: 'row',
@@ -108,19 +113,24 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 12,
-    color: BRAND.gray,
+    color: Theme.muted,
   },
   scoreValue: {
     fontSize: 28,
     fontWeight: '800',
-    color: BRAND.primary,
+    color: Theme.primary,
   },
   viewButton: {
-    borderColor: BRAND.primary,
-    borderRadius: 24,
+    borderColor: Theme.muted,
+    borderRadius: Theme.radius.button,
   },
   startButton: {
-    borderRadius: 24,
+    borderRadius: Theme.radius.button,
     marginTop: 4,
+    paddingVertical: 8,
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

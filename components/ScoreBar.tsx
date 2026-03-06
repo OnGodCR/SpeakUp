@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import Animated, {
   useSharedValue,
@@ -7,19 +7,14 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-};
+import { Theme } from '../constants/colors';
 
 function getScoreColor(score: number): string {
   if (score < 50) return '#EF4444';
-  if (score < 70) return '#F97316';
+  if (score < 70) return Theme.primary;
   if (score < 80) return '#EAB308';
   if (score < 90) return '#22C55E';
-  return BRAND.primary;
+  return Theme.accent;
 }
 
 type Props = {
@@ -27,6 +22,8 @@ type Props = {
   score: number;
   animated?: boolean;
 };
+
+const BAR_HEIGHT = Theme.progressBarHeight;
 
 export default function ScoreBar({ label, score, animated = true }: Props) {
   const width = useSharedValue(animated ? 0 : score);
@@ -57,7 +54,18 @@ export default function ScoreBar({ label, score, animated = true }: Props) {
       </View>
       <View style={styles.track}>
         <Animated.View
-          style={[styles.fill, fillStyle, { backgroundColor: color }]}
+          style={[
+            styles.fill,
+            fillStyle,
+            {
+              backgroundColor: color,
+              shadowColor: color,
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.6,
+              shadowRadius: 4,
+              elevation: 4,
+            },
+          ]}
         />
       </View>
     </View>
@@ -66,30 +74,30 @@ export default function ScoreBar({ label, score, animated = true }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 6,
+    marginVertical: 8,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   label: {
     fontSize: 14,
-    color: BRAND.dark,
-    fontWeight: '500',
+    color: Theme.text,
+    fontWeight: '600',
   },
   scoreText: {
     fontSize: 14,
     fontWeight: '700',
   },
   track: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#E5E7EB',
+    height: BAR_HEIGHT,
+    borderRadius: BAR_HEIGHT / 2,
+    backgroundColor: Theme.surface,
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: BAR_HEIGHT / 2,
   },
 });

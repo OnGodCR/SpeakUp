@@ -5,15 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Timer from '../../components/Timer';
 import { useChallengeStore } from '../../stores/challengeStore';
-
-const COLORS = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 const PREP_SECONDS = 300; // 5 minutes
 
@@ -28,7 +20,6 @@ export default function PrepScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Topic */}
       <View style={styles.topicContainer}>
         <Text style={styles.topicLabel}>Today's Topic</Text>
         <Text style={styles.topicText}>
@@ -39,7 +30,6 @@ export default function PrepScreen() {
         ) : null}
       </View>
 
-      {/* Timer */}
       <View style={styles.timerContainer}>
         <Text style={styles.timerLabel}>Prep Time Remaining</Text>
         <Timer
@@ -49,13 +39,12 @@ export default function PrepScreen() {
         />
       </View>
 
-      {/* Notes */}
-      <View style={styles.notesContainer}>
+      <View style={styles.notesCard}>
         <Text style={styles.notesLabel}>Jot down your thoughts</Text>
         <TextInput
           style={styles.notesInput}
           placeholder="Key points, structure ideas, opening line..."
-          placeholderTextColor={COLORS.gray}
+          placeholderTextColor={Theme.muted}
           multiline
           textAlignVertical="top"
           value={notes}
@@ -63,12 +52,11 @@ export default function PrepScreen() {
         />
       </View>
 
-      {/* Buttons */}
       <View style={styles.buttonContainer}>
         <Button
           mode="outlined"
           onPress={goToRecord}
-          textColor={COLORS.white}
+          textColor={Theme.text}
           style={styles.skipButton}
           labelStyle={styles.buttonLabel}
         >
@@ -77,8 +65,8 @@ export default function PrepScreen() {
         <Button
           mode="contained"
           onPress={goToRecord}
-          buttonColor={COLORS.primary}
-          textColor={COLORS.white}
+          buttonColor={Theme.primary}
+          textColor={Theme.text}
           style={styles.readyButton}
           labelStyle={styles.buttonLabel}
         >
@@ -92,7 +80,7 @@ export default function PrepScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.dark,
+    backgroundColor: Theme.background,
     paddingHorizontal: 24,
   },
   topicContainer: {
@@ -100,8 +88,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topicLabel: {
-    fontSize: 14,
-    color: COLORS.gray,
+    fontSize: 12,
+    color: Theme.muted,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginBottom: 8,
@@ -109,13 +97,14 @@ const styles = StyleSheet.create({
   topicText: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.white,
+    fontFamily: 'Nunito_800ExtraBold',
+    color: Theme.text,
     textAlign: 'center',
     lineHeight: 30,
   },
   hintText: {
     fontSize: 14,
-    color: COLORS.accent,
+    color: Theme.accent,
     marginTop: 8,
     textAlign: 'center',
     fontStyle: 'italic',
@@ -125,33 +114,35 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   timerLabel: {
-    fontSize: 13,
-    color: COLORS.gray,
+    fontSize: 12,
+    color: Theme.muted,
     marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  notesContainer: {
+  notesCard: {
     flex: 1,
     marginTop: 28,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   notesLabel: {
-    fontSize: 13,
-    color: COLORS.gray,
+    fontSize: 12,
+    color: Theme.muted,
     marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   notesInput: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 12,
-    padding: 16,
-    color: COLORS.white,
+    backgroundColor: 'transparent',
+    color: Theme.text,
     fontSize: 16,
     lineHeight: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    paddingVertical: 0,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -160,16 +151,17 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     flex: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-    borderRadius: 12,
+    borderColor: Theme.muted,
+    borderRadius: Theme.radius.button,
   },
   readyButton: {
     flex: 2,
-    borderRadius: 12,
+    borderRadius: Theme.radius.button,
+    paddingVertical: 8,
   },
   buttonLabel: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     paddingVertical: 4,
   },
 });

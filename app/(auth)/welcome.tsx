@@ -3,14 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Speaky from '../../components/Speaky';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -38,7 +31,7 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BRAND.primary,
+    backgroundColor: Theme.background,
   },
   content: {
     flex: 1,
@@ -49,13 +42,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: BRAND.white,
+    color: Theme.text,
     marginTop: 24,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 18,
-    color: BRAND.white,
+    color: Theme.muted,
     marginTop: 12,
     textAlign: 'center',
   },
@@ -64,14 +57,14 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   button: {
-    backgroundColor: BRAND.white,
-    borderRadius: 28,
+    backgroundColor: Theme.primary,
+    borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
   },
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: BRAND.primary,
+    color: Theme.text,
   },
 });

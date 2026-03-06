@@ -4,14 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput, Button, Snackbar, Text } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../stores/authStore';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -95,8 +88,8 @@ export default function SignUpScreen() {
             autoCapitalize="none"
             autoComplete="email"
             style={styles.input}
-            outlineColor={BRAND.gray}
-            activeOutlineColor={BRAND.primary}
+            outlineColor={Theme.muted}
+            activeOutlineColor={Theme.accent}
           />
 
           <TextInput
@@ -112,8 +105,8 @@ export default function SignUpScreen() {
               />
             }
             style={styles.input}
-            outlineColor={BRAND.gray}
-            activeOutlineColor={BRAND.primary}
+            outlineColor={Theme.muted}
+            activeOutlineColor={Theme.accent}
           />
 
           <TextInput
@@ -123,8 +116,8 @@ export default function SignUpScreen() {
             mode="outlined"
             autoCapitalize="words"
             style={styles.input}
-            outlineColor={BRAND.gray}
-            activeOutlineColor={BRAND.primary}
+            outlineColor={Theme.muted}
+            activeOutlineColor={Theme.accent}
           />
 
           <TextInput
@@ -134,8 +127,8 @@ export default function SignUpScreen() {
             mode="outlined"
             placeholder="08:00 AM"
             style={styles.input}
-            outlineColor={BRAND.gray}
-            activeOutlineColor={BRAND.primary}
+            outlineColor={Theme.muted}
+            activeOutlineColor={Theme.accent}
           />
 
           <Button
@@ -157,7 +150,7 @@ export default function SignUpScreen() {
             disabled={loading}
             style={styles.createButton}
             labelStyle={styles.createButtonLabel}
-            buttonColor={BRAND.primary}
+            buttonColor={Theme.primary}
           >
             Create Account
           </Button>
@@ -185,7 +178,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BRAND.white,
+    backgroundColor: Theme.background,
   },
   flex: {
     flex: 1,
@@ -199,30 +192,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: BRAND.dark,
+    color: Theme.text,
     marginBottom: 32,
   },
   input: {
     marginBottom: 16,
-    backgroundColor: BRAND.white,
+    backgroundColor: Theme.surface,
   },
   googleButton: {
     marginTop: 8,
-    borderColor: BRAND.gray,
-    borderRadius: 28,
+    borderColor: Theme.muted,
+    borderRadius: 14,
     paddingVertical: 4,
   },
   googleButtonLabel: {
-    color: BRAND.dark,
+    color: Theme.text,
     fontSize: 16,
   },
   createButton: {
     marginTop: 16,
-    borderRadius: 28,
+    borderRadius: 14,
     paddingVertical: 4,
   },
   createButtonLabel: {
-    color: BRAND.white,
+    color: Theme.text,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -230,10 +223,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 24,
     fontSize: 14,
-    color: BRAND.gray,
+    color: Theme.muted,
   },
   signInLinkBold: {
-    color: BRAND.primary,
+    color: Theme.primary,
     fontWeight: 'bold',
   },
 });

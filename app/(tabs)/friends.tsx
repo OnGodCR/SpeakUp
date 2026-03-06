@@ -6,20 +6,12 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, TextInput, Button } from 'react-native-paper';
+import { Text, TextInput } from 'react-native-paper';
 
 import FriendRow from '../../components/FriendRow';
 import Speaky from '../../components/Speaky';
 import { fetchFriendsActivity, FriendActivity } from '../../lib/api';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendActivity[]>([]);
@@ -93,8 +85,11 @@ export default function FriendsScreen() {
           dense
           left={<TextInput.Icon icon="magnify" />}
           style={styles.searchInput}
-          outlineColor="#E5E7EB"
-          activeOutlineColor={BRAND.primary}
+          placeholderTextColor={Theme.muted}
+          textColor={Theme.text}
+          outlineColor={Theme.surface}
+          activeOutlineColor={Theme.accent}
+          backgroundColor={Theme.surface}
         />
       </View>
 
@@ -110,7 +105,7 @@ export default function FriendsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={BRAND.primary}
+            tintColor={Theme.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -122,7 +117,7 @@ export default function FriendsScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: BRAND.background,
+    backgroundColor: Theme.background,
   },
   header: {
     paddingHorizontal: 20,
@@ -132,15 +127,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: BRAND.dark,
+    fontFamily: 'Nunito_800ExtraBold',
+    color: Theme.text,
   },
   searchContainer: {
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
   searchInput: {
-    backgroundColor: BRAND.white,
     fontSize: 14,
+    borderRadius: Theme.radius.button,
   },
   listContent: {
     paddingHorizontal: 20,

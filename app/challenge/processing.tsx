@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -9,6 +9,8 @@ import Animated, {
   withRepeat,
   withTiming,
   withSequence,
+  withDelay,
+  withSpring,
   Easing,
 } from 'react-native-reanimated';
 
@@ -18,15 +20,7 @@ import ScoreBar from '../../components/ScoreBar';
 import { useChallengeStore } from '../../stores/challengeStore';
 import { useUserStore } from '../../stores/userStore';
 import { getCelebration } from '../../constants/speakyMessages';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function ProcessingScreen() {
   const router = useRouter();
@@ -35,7 +29,6 @@ export default function ProcessingScreen() {
   const reset = useChallengeStore((s) => s.reset);
   const refreshStats = useUserStore((s) => s.refreshStats);
 
-  // Pulsing dot animation for loading state
   const dotScale = useSharedValue(1);
 
   useEffect(() => {
@@ -59,6 +52,20 @@ export default function ProcessingScreen() {
     router.replace('/(tabs)');
   };
 
+  const resultOpacity = useSharedValue(0);
+  const resultScale = useSharedValue(0.9);
+  useEffect(() => {
+    if (score) {
+      resultOpacity.value = withDelay(200, withTiming(1, { duration: 400 }));
+      resultScale.value = withDelay(200, withSpring(1, { damping: 14 }));
+    }
+  }, [!!score]);
+
+  const resultAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: resultOpacity.value,
+    transform: [{ scale: resultScale.value }],
+  }));
+
   if (isProcessing || !score) {
     return (
       <SafeAreaView style={styles.container}>
@@ -72,7 +79,7 @@ export default function ProcessingScreen() {
                 style={[
                   styles.dot,
                   dotStyle,
-                  { opacity: 0.4 + i * 0.2 },
+                  { opacity: 0.4 + i * 0.2, backgroundColor: Theme.accent },
                 ]}
               />
             ))}
@@ -89,21 +96,28 @@ export default function ProcessingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.resultContent}>
-        <Speaky
-          message={getCelebration(score.overall_score)}
-          mood={score.overall_score >= 70 ? 'excited' : 'happy'}
-          size="large"
-        />
-
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.resultContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View style={resultAnimatedStyle}>
         <View style={styles.gaugeContainer}>
           <ScoreGauge score={score.overall_score} size={160} label="Overall" />
         </View>
 
-        <View style={styles.barsContainer}>
+        <View style={styles.barsCard}>
           <ScoreBar label="Clarity" score={score.clarity_score} />
           <ScoreBar label="Pace" score={score.pace_score} />
           <ScoreBar label="Structure" score={score.structure_score} />
+        </View>
+
+        <View style={styles.speakyFeedbackCard}>
+          <Speaky
+            message={getCelebration(score.overall_score)}
+            mood={score.overall_score >= 70 ? 'excited' : 'happy'}
+            size="large"
+          />
         </View>
 
         <View style={styles.statsRow}>
@@ -113,11 +127,10 @@ export default function ProcessingScreen() {
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statValue}>{score.filler_word_count}</Text>
-            <Text style={styles.statLabel}>Filler Words</Text>
+            <Text style={styles.statLabel}>Filler</Text>
           </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statValue}>+{score.xp_earned}</Text>
-            <Text style={styles.statLabel}>XP Earned</Text>
+          <View style={styles.xpPill}>
+            <Text style={styles.xpPillText}>+{score.xp_earned} XP</Text>
           </View>
         </View>
 
@@ -140,11 +153,12 @@ export default function ProcessingScreen() {
           onPress={handleDone}
           style={styles.doneButton}
           labelStyle={styles.doneButtonLabel}
-          buttonColor={BRAND.primary}
+          buttonColor={Theme.primary}
         >
           Done
         </Button>
-      </View>
+        </Animated.View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -152,10 +166,9 @@ export default function ProcessingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BRAND.background,
+    backgroundColor: Theme.background,
   },
 
-  /* Loading state */
   loadingContent: {
     flex: 1,
     justifyContent: 'center',
@@ -172,122 +185,132 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: BRAND.primary,
   },
   loadingText: {
     fontSize: 18,
     fontWeight: '700',
-    color: BRAND.dark,
+    fontFamily: 'Nunito_800ExtraBold',
+    color: Theme.text,
     textAlign: 'center',
   },
   loadingSubtext: {
     fontSize: 14,
-    color: BRAND.gray,
+    color: Theme.muted,
     textAlign: 'center',
     marginTop: 8,
     lineHeight: 20,
   },
 
-  /* Result state */
-  resultContent: {
+  scroll: {
     flex: 1,
+  },
+  resultContent: {
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 24,
+    paddingBottom: 32,
   },
   gaugeContainer: {
     alignItems: 'center',
-    marginVertical: 20,
+    marginBottom: 20,
   },
-  barsContainer: {
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+  barsCard: {
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
+  },
+  speakyFeedbackCard: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   statsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     gap: 10,
     marginBottom: 16,
   },
   statBox: {
     flex: 1,
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
     paddingVertical: 14,
     alignItems: 'center',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   statValue: {
     fontSize: 20,
     fontWeight: '800',
-    color: BRAND.dark,
+    color: Theme.text,
+    fontFamily: 'Nunito_800ExtraBold',
   },
   statLabel: {
     fontSize: 11,
-    color: BRAND.gray,
+    color: Theme.muted,
     marginTop: 4,
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  xpPill: {
+    backgroundColor: Theme.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: Theme.radius.pill,
+  },
+  xpPillText: {
+    color: Theme.text,
+    fontSize: 15,
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
   },
   feedbackCard: {
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    padding: 16,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    padding: 18,
     marginBottom: 12,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   feedbackTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: BRAND.dark,
+    color: Theme.text,
     marginBottom: 6,
   },
   feedbackText: {
     fontSize: 14,
-    color: BRAND.gray,
-    lineHeight: 20,
+    color: Theme.muted,
+    lineHeight: 22,
   },
   improvementCard: {
-    backgroundColor: '#FFF7ED',
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: BRAND.accent,
+    backgroundColor: Theme.accent + '20',
+    borderRadius: Theme.radius.card,
+    padding: 18,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: Theme.accent + '50',
   },
   improvementTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: BRAND.accent,
+    color: Theme.accent,
     marginBottom: 6,
   },
   improvementText: {
     fontSize: 14,
-    color: BRAND.dark,
-    lineHeight: 20,
+    color: Theme.text,
+    lineHeight: 22,
   },
   doneButton: {
-    borderRadius: 28,
-    paddingVertical: 4,
-    marginTop: 'auto' as any,
+    borderRadius: Theme.radius.button,
+    paddingVertical: 14,
+    width: '100%',
   },
   doneButtonLabel: {
-    color: BRAND.white,
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: Theme.text,
+    fontSize: 17,
+    fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
   },
 });

@@ -12,19 +12,11 @@ import { Text } from 'react-native-paper';
 
 import Speaky from '../../components/Speaky';
 import { useUserStore, SpeechHistory } from '../../stores/userStore';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return '#10B981';
-  if (score >= 60) return BRAND.accent;
+  if (score >= 80) return Theme.accent;
+  if (score >= 60) return Theme.primary;
   return '#EF4444';
 }
 
@@ -85,7 +77,7 @@ export default function HistoryScreen() {
         <View
           style={[
             styles.scoreBadge,
-            { backgroundColor: getScoreColor(item.score) + '18' },
+            { backgroundColor: getScoreColor(item.score) + '25' },
           ]}
         >
           <Text
@@ -129,7 +121,7 @@ export default function HistoryScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={BRAND.primary}
+            tintColor={Theme.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -141,7 +133,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: BRAND.background,
+    backgroundColor: Theme.background,
   },
   header: {
     paddingHorizontal: 20,
@@ -151,7 +143,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: BRAND.dark,
+    fontFamily: 'Nunito_800ExtraBold',
+    color: Theme.text,
   },
   listContent: {
     paddingHorizontal: 20,
@@ -168,20 +161,16 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
 
-  /* Card */
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   cardLeft: {
     flex: 1,
@@ -189,22 +178,23 @@ const styles = StyleSheet.create({
   },
   cardDate: {
     fontSize: 12,
-    color: BRAND.gray,
+    color: Theme.muted,
     fontWeight: '500',
   },
   cardTopic: {
     fontSize: 15,
     fontWeight: '600',
-    color: BRAND.dark,
+    color: Theme.text,
   },
   scoreBadge: {
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    borderRadius: Theme.radius.button,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     marginLeft: 12,
   },
   scoreBadgeText: {
     fontSize: 18,
     fontWeight: '800',
+    fontFamily: 'Nunito_800ExtraBold',
   },
 });

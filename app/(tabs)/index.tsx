@@ -18,15 +18,7 @@ import { useChallengeStore } from '../../stores/challengeStore';
 import { useAuthStore } from '../../stores/authStore';
 import { getGreeting } from '../../constants/speakyMessages';
 import { fetchFriendsActivity, FriendActivity } from '../../lib/api';
-
-const BRAND = {
-  primary: '#6C3CE1',
-  accent: '#FF6B35',
-  dark: '#1A1A2E',
-  gray: '#6B7280',
-  background: '#F8F9FA',
-  white: '#FFFFFF',
-};
+import { Theme } from '../../constants/colors';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -80,38 +72,35 @@ export default function HomeScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={BRAND.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Theme.primary} />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Header Row ── */}
+        {/* Header Row: avatar (teal border), streak center, XP pill right */}
         <View style={styles.headerRow}>
-          {/* Avatar */}
           {avatarUrl ? (
-            <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+            <View style={styles.avatarWrap}>
+              <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+            </View>
           ) : (
-            <View style={styles.avatarFallback}>
+            <View style={[styles.avatarWrap, styles.avatarFallback]}>
               <Text style={styles.avatarInitial}>{initial}</Text>
             </View>
           )}
 
-          {/* Streak center */}
           <StreakBadge streak={streak} size="small" />
 
-          {/* Level badge */}
-          <View style={styles.levelBadge}>
-            <View style={styles.levelCircle}>
-              <Text style={styles.levelText}>Lv.{level}</Text>
-            </View>
+          <View style={styles.xpPill}>
+            <Text style={styles.xpPillText}>Lv.{level}</Text>
           </View>
         </View>
 
-        {/* ── Speaky Section ── */}
-        <View style={styles.speakySection}>
+        {/* Speaky in prominent card with speech bubble */}
+        <View style={styles.speakyCard}>
           <Speaky message={getGreeting(streak)} mood="happy" size="large" />
         </View>
 
-        {/* ── Daily Challenge Card ── */}
+        {/* Daily Challenge — hero CTA */}
         {challenge ? (
           <ChallengeCard
             topic={challenge.topic}
@@ -127,25 +116,25 @@ export default function HomeScreen() {
           />
         ) : null}
 
-        {/* ── Quick Stats Row ── */}
+        {/* Quick stats: 3 equal cards */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statValue}>{streak}</Text>
-            <Text style={styles.statLabel}>Current Streak</Text>
+            <Text style={styles.statLabel}>Streak</Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statValue}>
-              {todayScore != null ? todayScore : '---'}
+              {todayScore != null ? todayScore : '—'}
             </Text>
-            <Text style={styles.statLabel}>Today's Score</Text>
+            <Text style={styles.statLabel}>Today</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>---</Text>
-            <Text style={styles.statLabel}>Weekly Avg</Text>
+            <Text style={styles.statValue}>—</Text>
+            <Text style={styles.statLabel}>Weekly</Text>
           </View>
         </View>
 
-        {/* ── Friends Activity ── */}
+        {/* Friends Activity */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Friends Activity</Text>
         </View>
@@ -157,7 +146,7 @@ export default function HomeScreen() {
             contentContainerStyle={styles.friendsScroll}
           >
             {friends.map((friend) => (
-              <View key={friend.id} style={styles.friendBubble}>
+              <View key={friend.id} style={styles.friendChip}>
                 {friend.avatar_url ? (
                   <Image source={{ uri: friend.avatar_url }} style={styles.friendAvatar} />
                 ) : (
@@ -170,9 +159,11 @@ export default function HomeScreen() {
                 <Text style={styles.friendName} numberOfLines={1}>
                   {friend.display_name}
                 </Text>
-                <Text style={styles.friendScore}>
-                  {friend.today_score != null ? friend.today_score : '--'}
-                </Text>
+                <View style={styles.friendScoreChip}>
+                  <Text style={styles.friendScore}>
+                    {friend.today_score != null ? friend.today_score : '—'}
+                  </Text>
+                </View>
               </View>
             ))}
           </ScrollView>
@@ -191,7 +182,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: BRAND.background,
+    backgroundColor: Theme.background,
   },
   scroll: {
     flex: 1,
@@ -201,7 +192,6 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
 
-  /* Header */
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -209,46 +199,54 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
   },
+  avatarWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: Theme.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
   avatarFallback: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E8D5FF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: Theme.surface,
   },
   avatarInitial: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
-    color: BRAND.primary,
+    color: Theme.accent,
   },
-  levelBadge: {
-    alignItems: 'center',
+  xpPill: {
+    backgroundColor: Theme.surface,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: Theme.radius.pill,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
-  levelCircle: {
-    backgroundColor: BRAND.primary,
-    borderRadius: 14,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  levelText: {
-    color: BRAND.white,
-    fontSize: 12,
+  xpPillText: {
+    color: Theme.text,
+    fontSize: 13,
     fontWeight: '700',
   },
 
-  /* Speaky */
-  speakySection: {
-    alignItems: 'center',
+  speakyCard: {
     marginVertical: 16,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
+    alignItems: 'center',
   },
 
-  /* Stats */
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -257,47 +255,44 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: BRAND.white,
-    borderRadius: 14,
-    paddingVertical: 14,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    paddingVertical: 16,
     alignItems: 'center',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   statValue: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '800',
-    color: BRAND.dark,
+    color: Theme.text,
+    fontFamily: 'Nunito_800ExtraBold',
   },
   statLabel: {
-    fontSize: 11,
-    color: BRAND.gray,
+    fontSize: 12,
+    color: Theme.muted,
     marginTop: 4,
-    fontWeight: '500',
+    fontWeight: '600',
   },
 
-  /* Section */
   sectionHeader: {
     marginTop: 24,
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: BRAND.dark,
+    fontSize: 18,
+    fontWeight: '800',
+    color: Theme.text,
+    fontFamily: 'Nunito_800ExtraBold',
   },
 
-  /* Friends */
   friendsScroll: {
     gap: 16,
     paddingRight: 8,
   },
-  friendBubble: {
+  friendChip: {
     alignItems: 'center',
-    width: 72,
+    width: 80,
   },
   friendAvatar: {
     width: 48,
@@ -308,37 +303,47 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#E8D5FF',
+    backgroundColor: Theme.surface,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   friendAvatarInitial: {
     fontSize: 18,
     fontWeight: '700',
-    color: BRAND.primary,
+    color: Theme.accent,
   },
   friendName: {
-    fontSize: 11,
-    color: BRAND.dark,
-    marginTop: 4,
-    fontWeight: '500',
+    fontSize: 12,
+    color: Theme.text,
+    marginTop: 6,
+    fontWeight: '600',
     textAlign: 'center',
   },
+  friendScoreChip: {
+    marginTop: 4,
+    backgroundColor: Theme.surface,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Theme.radius.pill,
+  },
   friendScore: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
-    color: BRAND.primary,
-    marginTop: 2,
+    color: Theme.primary,
   },
   emptyFriends: {
-    backgroundColor: BRAND.white,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    padding: 24,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
   },
   emptyFriendsText: {
     fontSize: 14,
-    color: BRAND.gray,
+    color: Theme.muted,
     textAlign: 'center',
   },
 });
