@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "SpeakUp",
+    "slug": "speakup",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "speakup",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6C3CE1"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.speakup.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#6C3CE1",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.speakup.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#6C3CE1"
+        }
+      ]
+    ]
+  }
+}
