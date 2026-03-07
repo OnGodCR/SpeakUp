@@ -1,16 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Animated, {
   FadeInDown,
   FadeInRight,
 } from 'react-native-reanimated';
 import { Colors, getStreakColor } from '@/constants/Colors';
-import { BorderRadius, FontSize, FontWeight, Spacing, Shadow } from '@/constants/theme';
+import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { StreakFlame } from '@/components/ui/StreakFlame';
+import Speaky from '@/components/Speaky';
+import { getGreeting } from '@/constants/speakyMessages';
 
-const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   // Placeholder data — will be wired to stores later
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const xp = 2450;
   const todayScore = 78;
   const weeklyAvg = 82;
+  const coachMessage = `${getGreeting(streak)} Also yes, I'm absolutely tracking your consistency.`;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -39,16 +41,14 @@ export default function HomeScreen() {
         </Badge>
       </Animated.View>
 
-      {/* Speaky Mascot Card */}
+      {/* Speaky Section */}
       <Animated.View entering={FadeInDown.duration(400).delay(100)}>
         <Card style={styles.speakyCard} accent>
           <View style={styles.speakyRow}>
-            <Text style={styles.speakyEmoji}>{'\u{1F399}\uFE0F'}</Text>
+            <Speaky pose="waving" size={110} showBubble={false} />
             <View style={styles.speechBubble}>
               <View style={styles.speechArrow} />
-              <Text style={styles.speakyMessage}>
-                Your {streak}-day streak is on the line. Do it for us. {'\u{1FAE1}'}
-              </Text>
+              <Text style={styles.speakyMessage}>{coachMessage}</Text>
             </View>
           </View>
         </Card>
@@ -192,9 +192,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: Spacing.sm,
-  },
-  speakyEmoji: {
-    fontSize: 44,
   },
   speechBubble: {
     flex: 1,
