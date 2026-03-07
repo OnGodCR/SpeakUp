@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
@@ -49,17 +50,20 @@ export default function SignInScreen() {
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
+          <Text style={styles.emoji}>{'\u{1F44B}'}</Text>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>
             Your streak is waiting for you.
           </Text>
-        </View>
+        </Animated.View>
 
-        <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
-          <Text style={styles.googleIcon}>G</Text>
-          <Text style={styles.googleText}>Continue with Google</Text>
-        </TouchableOpacity>
+        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+            <Text style={styles.googleIcon}>G</Text>
+            <Text style={styles.googleText}>Continue with Google</Text>
+          </TouchableOpacity>
+        </Animated.View>
 
         <View style={styles.dividerRow}>
           <View style={styles.divider} />
@@ -67,30 +71,32 @@ export default function SignInScreen() {
           <View style={styles.divider} />
         </View>
 
-        <Input
-          label="Email"
-          placeholder="you@example.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <Input
-          label="Password"
-          placeholder="Your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Input
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <Input
+            label="Password"
+            placeholder="Your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        <Button
-          title="Sign In"
-          onPress={handleSignIn}
-          loading={loading}
-          style={{ marginTop: Spacing.md }}
-        />
+          <Button
+            title="Sign In"
+            onPress={handleSignIn}
+            loading={loading}
+            style={{ marginTop: Spacing.md }}
+          />
+        </Animated.View>
 
         <View style={styles.footerRow}>
           <Text style={styles.footerText}>Don't have an account? </Text>
@@ -115,26 +121,36 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: Spacing.xl,
+    alignItems: 'center',
+  },
+  emoji: {
+    fontSize: 48,
+    marginBottom: Spacing.md,
   },
   title: {
     fontSize: FontSize.xxl,
     fontWeight: FontWeight.bold,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textMuted,
+    textAlign: 'center',
   },
   googleButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md + 2,
     gap: Spacing.sm,
     marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.surfaceBorder,
+    minHeight: 58,
   },
   googleIcon: {
     fontSize: FontSize.xl,
@@ -154,7 +170,7 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.surfaceBorder,
   },
   dividerText: {
     color: Colors.textMuted,
@@ -170,7 +186,7 @@ const styles = StyleSheet.create({
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: Spacing.lg,
+    marginTop: Spacing.xl,
   },
   footerText: {
     color: Colors.textMuted,
@@ -179,6 +195,6 @@ const styles = StyleSheet.create({
   footerLink: {
     color: Colors.primary,
     fontSize: FontSize.sm,
-    fontWeight: FontWeight.semibold,
+    fontWeight: FontWeight.bold,
   },
 });

@@ -44,7 +44,7 @@ export function Button({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={Colors.textPrimary} />
+        <ActivityIndicator color={Colors.textPrimary} size="small" />
       ) : (
         <Text style={[styles.text, styles[`${variant}Text` as keyof typeof styles], textStyle]}>
           {title}
@@ -56,26 +56,41 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.md + 2,
     paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 56,
+    minHeight: 58,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   primary: {
     backgroundColor: Colors.primary,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.4,
   },
   secondary: {
     backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.surfaceBorder,
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: Colors.primary,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   ghost: {
     backgroundColor: 'transparent',
+    shadowOpacity: 0,
+    elevation: 0,
+    minHeight: 44,
   },
   disabled: {
     opacity: 0.5,
@@ -84,6 +99,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
     color: Colors.textPrimary,
+    letterSpacing: 0.3,
   },
   primaryText: {},
   secondaryText: {},
@@ -92,5 +108,6 @@ const styles = StyleSheet.create({
   },
   ghostText: {
     color: Colors.textMuted,
+    fontSize: FontSize.md,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TextInputProps } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { BorderRadius, FontSize, Spacing } from '@/constants/theme';
+import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -38,7 +38,9 @@ const styles = StyleSheet.create({
   label: {
     color: Colors.textMuted,
     fontSize: FontSize.sm,
-    marginBottom: Spacing.xs,
+    fontWeight: FontWeight.semibold,
+    marginBottom: Spacing.xs + 2,
+    letterSpacing: 0.3,
   },
   input: {
     backgroundColor: Colors.surface,
@@ -48,7 +50,8 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.textPrimary,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: Colors.surfaceBorder,
+    minHeight: 52,
   },
   focused: {
     borderColor: Colors.primary,
