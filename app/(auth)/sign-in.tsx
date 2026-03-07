@@ -1,217 +1,200 @@
 import React, { useState } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
+  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Pressable,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { TextInput, Button, Snackbar, Text } from 'react-native-paper';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { useAuthStore } from '../../stores/authStore';
-import { Theme } from '../../constants/colors';
+import { Colors } from '@/constants/Colors';
+import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function SignInScreen() {
   const router = useRouter();
-  const { signIn, signInWithGoogle } = useAuthStore();
-
+  const { signIn } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [secureText, setSecureText] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-
-  const showError = (message: string) => {
-    setError(message);
-    setSnackbarVisible(true);
-  };
 
   const handleSignIn = async () => {
-    if (!email.trim() || !password) {
-      showError('Please enter your email and password.');
+    setError('');
+
+    if (!email || !password) {
+      setError('Please fill in all fields.');
       return;
     }
 
     setLoading(true);
-    try {
-      await signIn(email.trim(), password);
-    } catch (err: any) {
-      showError(err.message ?? 'Sign in failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const { error: signInError } = await signIn(email, password);
+    setLoading(false);
 
-  const handleGoogle = async () => {
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (err: any) {
-      showError(err.message ?? 'Google sign in failed. Please try again.');
-    } finally {
-      setGoogleLoading(false);
+    if (signInError) {
+      setError(signInError.message);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.title}>Welcome back</Text>
-          <Text style={styles.subtitle}>Sign in to continue your streak</Text>
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
+          <Text style={styles.emoji}>{'\u{1F44B}'}</Text>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>
+            Your streak is waiting for you.
+          </Text>
+        </Animated.View>
 
-          <TextInput
+        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+            <Text style={styles.googleIcon}>G</Text>
+            <Text style={styles.googleText}>Continue with Google</Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <View style={styles.dividerRow}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.divider} />
+        </View>
+
+        <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Input
             label="Email"
+            placeholder="you@example.com"
             value={email}
             onChangeText={setEmail}
-            mode="outlined"
             keyboardType="email-address"
             autoCapitalize="none"
-            autoComplete="email"
-            style={styles.input}
-            outlineColor={Theme.muted}
-            activeOutlineColor={Theme.accent}
           />
-
-          <TextInput
+          <Input
             label="Password"
+            placeholder="Your password"
             value={password}
             onChangeText={setPassword}
-            mode="outlined"
-            secureTextEntry={secureText}
-            right={
-              <TextInput.Icon
-                icon={secureText ? 'eye-off' : 'eye'}
-                onPress={() => setSecureText(!secureText)}
-              />
-            }
-            style={styles.input}
-            outlineColor={Theme.muted}
-            activeOutlineColor={Theme.accent}
+            secureTextEntry
           />
 
-          <Button
-            mode="outlined"
-            onPress={handleGoogle}
-            loading={googleLoading}
-            disabled={googleLoading}
-            style={styles.googleButton}
-            labelStyle={styles.googleButtonLabel}
-            icon="google"
-          >
-            Continue with Google
-          </Button>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <Button
-            mode="contained"
+            title="Sign In"
             onPress={handleSignIn}
             loading={loading}
-            disabled={loading}
-            style={styles.signInButton}
-            labelStyle={styles.signInButtonLabel}
-            buttonColor={Theme.primary}
-          >
-            Sign in
-          </Button>
+            style={{ marginTop: Spacing.md }}
+          />
+        </Animated.View>
 
-          <Pressable onPress={() => router.push('/(auth)/sign-up' as any)}>
-            <Text style={styles.signUpLink}>
-              Don't have an account?{' '}
-              <Text style={styles.signUpLinkBold}>Sign up</Text>
-            </Text>
-          </Pressable>
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        action={{ label: 'OK', onPress: () => setSnackbarVisible(false) }}
-      >
-        {error}
-      </Snackbar>
-    </SafeAreaView>
+        <View style={styles.footerRow}>
+          <Text style={styles.footerText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => router.replace('/(auth)/sign-up')}>
+            <Text style={styles.footerLink}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.background,
+    backgroundColor: Colors.background,
   },
-  flex: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 28,
-    paddingTop: 40,
+  scroll: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: 80,
     paddingBottom: 40,
   },
+  header: {
+    marginBottom: Spacing.xl,
+    alignItems: 'center',
+  },
+  emoji: {
+    fontSize: 48,
+    marginBottom: Spacing.md,
+  },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    fontFamily: 'Nunito_800ExtraBold',
-    color: Theme.text,
-    marginBottom: 8,
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.bold,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.xs,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: Theme.muted,
-    marginBottom: 32,
-  },
-  input: {
-    marginBottom: 20,
-    backgroundColor: Theme.surface,
-    borderRadius: Theme.radius.bubbly,
+    fontSize: FontSize.md,
+    color: Colors.textMuted,
+    textAlign: 'center',
   },
   googleButton: {
-    marginTop: 8,
-    marginBottom: 20,
-    borderColor: Theme.primary,
-    borderRadius: Theme.radius.bubblyButton,
-    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md + 2,
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.surfaceBorder,
+    minHeight: 58,
   },
-  googleButtonLabel: {
-    color: Theme.primary,
-    fontSize: 16,
-    fontWeight: '700',
+  googleIcon: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.bold,
+    color: Colors.textPrimary,
   },
-  signInButton: {
-    borderRadius: Theme.radius.bubblyButton,
-    paddingVertical: 8,
-    shadowColor: Theme.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+  googleText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.textPrimary,
   },
-  signInButtonLabel: {
-    color: Theme.text,
-    fontSize: 17,
-    fontWeight: '800',
-    fontFamily: 'Nunito_800ExtraBold',
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
   },
-  signUpLink: {
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.surfaceBorder,
+  },
+  dividerText: {
+    color: Colors.textMuted,
+    marginHorizontal: Spacing.md,
+    fontSize: FontSize.sm,
+  },
+  errorText: {
+    color: Colors.error,
+    fontSize: FontSize.sm,
     textAlign: 'center',
-    marginTop: 28,
-    fontSize: 15,
-    color: Theme.muted,
+    marginTop: Spacing.sm,
   },
-  signUpLinkBold: {
-    color: Theme.primary,
-    fontWeight: '700',
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: Spacing.xl,
+  },
+  footerText: {
+    color: Colors.textMuted,
+    fontSize: FontSize.sm,
+  },
+  footerLink: {
+    color: Colors.primary,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.bold,
   },
 });

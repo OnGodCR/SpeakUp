@@ -1,149 +1,120 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import SpeakyMascot from '../../components/SpeakyMascot';
-import { Theme } from '../../constants/colors';
+import { Colors } from '@/constants/Colors';
+import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+
+const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.mascotSection}>
-          <View style={styles.mascotBase} />
-          <View style={styles.mascotWrap}>
-            <SpeakyMascot pose="friendly" scale={0.8} />
+    <View style={styles.container}>
+      <Animated.View entering={FadeInDown.duration(600)} style={styles.heroSection}>
+        {/* Speaky mascot in card */}
+        <Card style={styles.mascotCard} accent>
+          <Text style={styles.mascotEmoji}>{'\u{1F399}\uFE0F'}</Text>
+          <View style={styles.speechBubble}>
+            <View style={styles.speechArrow} />
+            <Text style={styles.speechText}>
+              Ready to become a speaker people actually listen to?
+            </Text>
           </View>
-        </View>
+        </Card>
 
-        <Text style={styles.brandName}>SpeakUp</Text>
-        <Text style={styles.tagline}>
-          Get better at speaking. One challenge a day.
-        </Text>
-      </View>
+        <Animated.Text entering={FadeInDown.duration(500).delay(200)} style={styles.title}>
+          SpeakUp
+        </Animated.Text>
+        <Animated.Text entering={FadeInDown.duration(500).delay(350)} style={styles.subtitle}>
+          Your AI public speaking coach.{'\n'}Daily challenges. Real feedback. No judgment.
+        </Animated.Text>
+      </Animated.View>
 
-      <View style={styles.bottom}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.primaryButton,
-            pressed && styles.buttonPressed,
-          ]}
+      <Animated.View entering={FadeInUp.duration(500).delay(500)} style={styles.bottomSection}>
+        <Button
+          title="Get Started"
           onPress={() => router.push('/(auth)/how-it-works')}
-        >
-          <Text style={styles.primaryButtonText}>Get started</Text>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            pressed && styles.buttonPressed,
-          ]}
+        />
+        <Button
+          title="I already have an account"
           onPress={() => router.push('/(auth)/sign-in')}
-        >
-          <Text style={styles.secondaryButtonText}>
-            I already have an account
-          </Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+          variant="ghost"
+        />
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.background,
+    backgroundColor: Colors.background,
+    paddingHorizontal: Spacing.lg,
+    justifyContent: 'space-between',
+    paddingTop: 80,
+    paddingBottom: 40,
   },
-  content: {
+  heroSection: {
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
   },
-  mascotSection: {
+  mascotCard: {
     alignItems: 'center',
-    marginBottom: 32,
-    backgroundColor: Theme.background,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xl,
+    width: '100%',
   },
-  mascotBase: {
+  mascotEmoji: {
+    fontSize: 80,
+    marginBottom: Spacing.md,
+  },
+  speechBubble: {
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    width: '100%',
+    position: 'relative',
+  },
+  speechArrow: {
     position: 'absolute',
-    bottom: 0,
-    width: 220,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Theme.background,
-    opacity: 0.4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 2,
+    top: -8,
+    alignSelf: 'center',
+    left: '50%',
+    marginLeft: -8,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 10,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: Colors.background,
   },
-  mascotWrap: {
-    marginBottom: 8,
-    backgroundColor: Theme.background,
-  },
-  brandName: {
-    fontSize: 32,
-    fontWeight: '800',
-    fontFamily: 'Nunito_800ExtraBold',
-    color: Theme.primary,
+  speechText: {
+    color: Colors.textPrimary,
+    fontSize: FontSize.sm,
     textAlign: 'center',
-    marginBottom: 8,
-    letterSpacing: 0.5,
+    fontStyle: 'italic',
+    lineHeight: 22,
   },
-  tagline: {
-    fontSize: 16,
-    color: Theme.muted,
+  title: {
+    fontSize: FontSize.hero,
+    fontWeight: FontWeight.extrabold,
+    color: Colors.primary,
+    marginBottom: Spacing.sm,
+  },
+  subtitle: {
+    fontSize: FontSize.md,
+    color: Colors.textMuted,
     textAlign: 'center',
     lineHeight: 24,
-    paddingHorizontal: 16,
   },
-  bottom: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 24,
-  },
-  primaryButton: {
-    backgroundColor: Theme.primary,
-    borderRadius: Theme.radius.bubblyButton,
-    paddingVertical: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: Theme.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  primaryButtonText: {
-    fontSize: 18,
-    fontWeight: '800',
-    fontFamily: 'Nunito_800ExtraBold',
-    color: Theme.text,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderRadius: Theme.radius.bubblyButton,
-    paddingVertical: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Theme.primary,
-    marginTop: 14,
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Theme.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  buttonPressed: {
-    opacity: 0.9,
+  bottomSection: {
+    gap: Spacing.sm,
   },
 });

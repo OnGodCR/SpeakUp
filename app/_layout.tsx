@@ -1,64 +1,29 @@
 import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, Linking, Platform } from 'react-native';
-import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
-import { createSessionFromUrl } from '../lib/auth';
-import {
-  useFonts,
-  Nunito_600SemiBold,
-  Nunito_700Bold,
-  Nunito_800ExtraBold,
-} from '@expo-google-fonts/nunito';
-import { useAuthStore } from '../stores/authStore';
-import { Theme } from '../constants/colors';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'react-native';
+import 'react-native-reanimated';
 
-const theme = {
-  ...MD3DarkTheme,
-  colors: {
-    ...MD3DarkTheme.colors,
-    primary: Theme.primary,
-    secondary: Theme.accent,
-    background: Theme.background,
-    surface: Theme.surface,
-  },
+import { Colors } from '@/constants/Colors';
+import { useAuthStore } from '@/stores/authStore';
+import { supabase } from '@/lib/supabase';
+
+export { ErrorBoundary } from 'expo-router';
+
+export const unstable_settings = {
+  initialRouteName: '(auth)',
 };
 
-export default function RootLayout() {
-  const { session, isLoading, initialize } = useAuthStore();
+SplashScreen.preventAutoHideAsync();
+
+function useProtectedRoute() {
   const segments = useSegments();
   const router = useRouter();
-  const [fontsLoaded] = useFonts({
-    Nunito_600SemiBold,
-    Nunito_700Bold,
-    Nunito_800ExtraBold,
-  });
+  const { session, loading } = useAuthStore();
 
   useEffect(() => {
-    initialize();
-  }, []);
-
-  // Handle OAuth redirect when app is opened from cold start (e.g. native deep link)
-  useEffect(() => {
-    if (Platform.OS === 'web') return;
-
-    const handleUrl = async (url: string | null) => {
-      if (!url || !url.includes('access_token')) return;
-      try {
-        await createSessionFromUrl(url);
-        router.replace('/(tabs)');
-      } catch {
-        // Invalid or expired; user can try again from sign-in
-      }
-    };
-
-    Linking.getInitialURL().then(handleUrl);
-    const sub = Linking.addEventListener('url', (e) => handleUrl(e.url));
-    return () => sub.remove();
-  }, [router]);
-
-  useEffect(() => {
-    if (isLoading) return;
+    if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
 
@@ -67,31 +32,63 @@ export default function RootLayout() {
     } else if (session && inAuthGroup) {
       router.replace('/(tabs)');
     }
-  }, [session, isLoading, segments]);
+  }, [session, loading, segments]);
+}
 
-  if (!fontsLoaded || isLoading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Theme.background,
-        }}
-      >
-        <ActivityIndicator size="large" color={Theme.primary} />
-      </View>
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+  const { setSession } = useAuthStore();
+
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  // Listen for auth state changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
     );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (!loaded) {
+    return null;
   }
 
+  return <RootLayoutNav />;
+}
+
+function RootLayoutNav() {
+  useProtectedRoute();
+
   return (
-    <PaperProvider theme={theme}>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }}>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: Colors.background },
+        }}
+      >
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="challenge" options={{ presentation: 'fullScreenModal' }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
-    </PaperProvider>
+    </>
   );
 }
