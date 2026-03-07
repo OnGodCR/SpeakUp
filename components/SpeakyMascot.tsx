@@ -30,7 +30,7 @@ export default function SpeakyMascot({ pose = 'friendly', scale = 1 }: Props) {
   return (
     <View style={[styles.frame, styles.frameBg, { width, height }]} overflow="hidden">
       <Image
-        source={require('../assets/speakup-mascot-sheet.png')}
+        source={require('../assets/speakup-mascot-transparent.png')}
         style={[
           styles.sprite,
           {
