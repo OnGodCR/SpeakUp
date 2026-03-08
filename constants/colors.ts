@@ -1,11 +1,18 @@
 /**
- * SpeakUp brand palette — gamified + friendly
+ * SpeakUp brand palette -- gamified + friendly
  * Primary #6C3CE1 (purple), Accent #FF6B35 (orange)
+ * Deep Navy #1A1A2E for trust, Teal #0D9488 for growth
  */
 export const Colors = {
   primary: '#6C3CE1',
+  primaryLight: '#8B5CF6',
+  primaryDark: '#5B2BC7',
   secondary: '#F1EAFF',
   accent: '#FF6B35',
+  accentLight: '#FF8F66',
+  deepNavy: '#1A1A2E',
+  teal: '#0D9488',
+  tealLight: '#14B8A6',
   background: '#F7F8FE',
   surface: '#FFFFFF',
   text: '#1E1B2E',
@@ -15,7 +22,7 @@ export const Colors = {
   error: '#EF4444',
   warning: '#F59E0B',
   streak: {
-    none: '#FFFFFF',
+    none: '#C0C0C0',
     low: '#FF6B35',
     medium: '#FF4757',
     high: '#3B82F6',

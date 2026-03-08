@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   levelText: {
-    color: Theme.text,
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },

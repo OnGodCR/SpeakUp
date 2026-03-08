@@ -3,9 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Theme } from '../constants/Colors';
 
-/** Streak flame color: white (0), orange (1–6), red (7–29), blue (30–99), purple (100+) */
+/** Streak color: grey (0), orange (1-6), red (7-29), blue (30-99), purple (100+) */
 function getStreakColor(streak: number): string {
-  if (streak <= 0) return Theme.streak.white;
+  if (streak <= 0) return '#C0C0C0';
   if (streak < 7) return Theme.streak.orange;
   if (streak < 30) return Theme.streak.red;
   if (streak < 100) return Theme.streak.blue;
