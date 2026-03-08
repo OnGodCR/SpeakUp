@@ -43,8 +43,8 @@ export function getRedirectUrl(): string {
 
 /**
  * Parse the OAuth redirect URL (from Supabase) and set the session.
- * Used after Google sign-in when the app is opened via deep link or when
- * WebBrowser.openAuthSessionAsync returns with the callback URL.
+ * Used after Google sign-in when handling a callback URL on web or when
+ * the native app is opened via deep link/WebBrowser.openAuthSessionAsync.
  */
 export async function createSessionFromUrl(url: string): Promise<void> {
   const params = getParamsFromUrl(url);

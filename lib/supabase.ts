@@ -10,6 +10,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
+    // Callback routes handle OAuth URLs explicitly via createSessionFromUrl(url)
+    // for both web callback pages and native Expo deep-link/auth-session flows.
     detectSessionInUrl: false,
   },
 });

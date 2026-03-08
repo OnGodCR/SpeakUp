@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
+import { createSessionFromUrl } from '../../../lib/auth';
 import { Theme } from '../../../constants/colors';
 
 /**
- * OAuth callback route. On web, Supabase redirects here with tokens in the URL hash.
- * The Supabase client (with detectSessionInUrl) parses the hash and sets the session.
- * We wait for the session and then redirect to the app.
+ * OAuth callback route for web redirects.
+ * This page explicitly parses callback URL tokens and sets the session.
+ * Native Expo flow continues to parse callback URLs via createSessionFromUrl(url)
+ * in its deep-link/auth-session path.
  */
 export default function AuthCallbackScreen() {
   const router = useRouter();
@@ -17,14 +19,27 @@ export default function AuthCallbackScreen() {
     if (handled.current) return;
 
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         handled.current = true;
         router.replace('/(tabs)');
       }
     };
 
-    checkSession();
+    const bootstrapSession = async () => {
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        try {
+          await createSessionFromUrl(window.location.href);
+        } catch {
+          // If URL has no OAuth tokens, rely on existing session/auth-state updates.
+        }
+      }
+      await checkSession();
+    };
+
+    bootstrapSession();
     const interval = setInterval(checkSession, 300);
     const sub = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
