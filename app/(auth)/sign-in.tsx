@@ -9,12 +9,17 @@ import {
   ScrollView,
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as WebBrowser from 'expo-web-browser';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuthStore } from '@/stores/authStore';
+import { supabase } from '@/lib/supabase';
+import { createSessionFromUrl, getRedirectUrl } from '@/lib/auth';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -41,6 +46,48 @@ export default function SignInScreen() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const redirectTo = getRedirectUrl();
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo, skipBrowserRedirect: true },
+      });
+
+      if (oauthError) {
+        throw oauthError;
+      }
+
+      if (Platform.OS !== 'web') {
+        if (!data?.url) {
+          throw new Error('Failed to start Google sign-in.');
+        }
+
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+        if (result.type === 'cancel' || result.type === 'dismiss') {
+          return;
+        }
+
+        if (result.type !== 'success' || !result.url) {
+          throw new Error('Google sign-in failed.');
+        }
+
+        await createSessionFromUrl(result.url);
+      }
+    } catch (oauthSignInError) {
+      if (oauthSignInError instanceof Error) {
+        setError(oauthSignInError.message);
+      } else {
+        setError('Unable to sign in with Google.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -59,7 +106,12 @@ export default function SignInScreen() {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.googleButton}
+            activeOpacity={0.8}
+            onPress={handleGoogleSignIn}
+            disabled={loading}
+          >
             <Text style={styles.googleIcon}>G</Text>
             <Text style={styles.googleText}>Continue with Google</Text>
           </TouchableOpacity>
