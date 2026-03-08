@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.radius.pill,
   },
   xpPillText: {
-    color: Theme.text,
+    color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '800',
     fontFamily: 'Nunito_800ExtraBold',
@@ -213,18 +213,19 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   improvementCard: {
-    backgroundColor: Theme.accent + '20',
+    backgroundColor: Theme.accent + '15',
     borderRadius: Theme.radius.card,
     padding: 18,
     marginBottom: 24,
-    borderWidth: 1,
-    borderColor: Theme.accent + '50',
+    borderWidth: 2,
+    borderColor: Theme.accent + '40',
   },
   improvementTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: Theme.accent,
     marginBottom: 6,
+    letterSpacing: 0.5,
   },
   improvementText: {
     fontSize: 14,
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   doneButtonLabel: {
-    color: Theme.text,
+    color: '#FFFFFF',
     fontSize: 17,
     fontWeight: '800',
     fontFamily: 'Nunito_800ExtraBold',

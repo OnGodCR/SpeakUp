@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: Theme.primary,
+    backgroundColor: Theme.accent,
   },
   recordDot: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Theme.primary,
+    backgroundColor: Theme.accent,
   },
   recordingLabel: {
     marginTop: 12,

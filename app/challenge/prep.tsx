@@ -66,7 +66,7 @@ export default function PrepScreen() {
           mode="contained"
           onPress={goToRecord}
           buttonColor={Theme.primary}
-          textColor={Theme.text}
+          textColor="#FFFFFF"
           style={styles.readyButton}
           labelStyle={styles.buttonLabel}
         >

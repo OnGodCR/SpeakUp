@@ -41,7 +41,7 @@ export default function ChallengeCard({
               <Button
                 mode="outlined"
                 onPress={onViewScore}
-                textColor={Theme.text}
+                textColor="#FFFFFF"
                 style={styles.viewButton}
                 labelStyle={styles.buttonLabel}
               >
@@ -54,7 +54,7 @@ export default function ChallengeCard({
             mode="contained"
             onPress={onStart}
             buttonColor={Theme.primary}
-            textColor={Theme.text}
+            textColor="#FFFFFF"
             style={styles.startButton}
             labelStyle={styles.buttonLabel}
           >
