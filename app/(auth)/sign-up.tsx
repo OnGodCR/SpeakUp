@@ -18,15 +18,31 @@ import { useAuthStore } from '@/stores/authStore';
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const { signUp } = useAuthStore();
+  const { signUp, signInWithGoogle } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+
+
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setInfo('');
+    setLoading(true);
+    const { error: googleError } = await signInWithGoogle();
+    setLoading(false);
+
+    if (googleError && googleError.message !== 'Google sign-in cancelled.') {
+      setError(googleError.message);
+    }
+  };
 
   const handleSignUp = async () => {
     setError('');
+    setInfo('');
 
     if (!email || !password) {
       setError('Please fill in all fields.');
@@ -47,8 +63,10 @@ export default function SignUpScreen() {
 
     if (signUpError) {
       setError(signUpError.message);
+      return;
     }
-    // Auth listener in root layout will handle navigation on success
+
+    setInfo('Speaky is waiting! Check your email to verify your account so we can start practicing.');
   };
 
   return (
@@ -70,7 +88,7 @@ export default function SignUpScreen() {
 
         {/* Google OAuth button */}
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8} onPress={handleGoogleSignIn}>
             <Text style={styles.googleIcon}>G</Text>
             <Text style={styles.googleText}>Continue with Google</Text>
           </TouchableOpacity>
@@ -107,6 +125,7 @@ export default function SignUpScreen() {
           />
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          {info ? <Text style={styles.infoText}>{info}</Text> : null}
 
           <Button
             title="Create Account"
@@ -200,6 +219,13 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     textAlign: 'center',
     marginTop: Spacing.sm,
+  },
+  infoText: {
+    color: Colors.primary,
+    fontSize: FontSize.sm,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+    lineHeight: 20,
   },
   footerRow: {
     flexDirection: 'row',

@@ -4,29 +4,14 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { BorderRadius, FontSize, FontWeight } from '@/constants/theme';
 
-function TabIcon({
-  emoji,
-  label,
-  focused,
-}: {
-  emoji: string;
-  label: string;
-  focused: boolean;
-}) {
+function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
   return (
     <View style={styles.tabItem}>
-      <Text style={[styles.tabEmoji, focused && styles.tabEmojiActive]}>
-        {emoji}
-      </Text>
-      <Text
-        style={[
-          styles.tabLabel,
-          focused ? styles.tabLabelActive : styles.tabLabelInactive,
-        ]}
-      >
+      <Text style={[styles.tabEmoji, focused && styles.tabEmojiActive]}>{emoji}</Text>
+      <Text style={[styles.tabLabel, focused ? styles.tabLabelActive : styles.tabLabelInactive]}>
         {label}
       </Text>
-      {focused && <View style={styles.activeIndicator} />}
+      {focused ? <View style={styles.activeIndicator} /> : null}
     </View>
   );
 }
@@ -40,38 +25,42 @@ export default function TabLayout() {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.surfaceBorder,
           borderTopWidth: 1,
-          height: 72,
-          paddingBottom: 8,
+          height: 80,
+          paddingBottom: 10,
           paddingTop: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 12,
-          elevation: 10,
         },
         tabBarShowLabel: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textMuted,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji={'\u{1F3E0}'} label="Home" focused={focused} />
-          ),
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label="Home" focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="history"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji={'\u{1F464}'} label="Profile" focused={focused} />
-          ),
+          title: 'History',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🕓" label="History" focused={focused} />,
         }}
       />
+      <Tabs.Screen
+        name="friends"
+        options={{
+          title: 'Friends',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="👥" label="Friends" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" label="Profile" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen name="two" options={{ href: null }} />
     </Tabs>
   );
 }
@@ -84,7 +73,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tabEmoji: {
-    fontSize: 22,
+    fontSize: 20,
     opacity: 0.6,
   },
   tabEmojiActive: {
@@ -103,10 +92,10 @@ const styles = StyleSheet.create({
   },
   activeIndicator: {
     position: 'absolute',
-    bottom: -6,
-    width: 32,
-    height: 3,
+    bottom: -7,
+    width: 28,
+    height: 4,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
 });

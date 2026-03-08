@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { Text } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Theme } from '../constants/colors';
+import { View, TouchableOpacity, StyleSheet, Platform, Text } from 'react-native';
+import { Theme } from '../constants/Colors';
 
 type TabBarProps = {
   state: { routes: { name: string; key: string; params?: object }[]; index: number };
@@ -14,10 +12,10 @@ type TabBarProps = {
 };
 
 const TAB_ICONS: Record<string, string> = {
-  index: 'home',
-  history: 'clock-outline',
-  friends: 'account-group',
-  profile: 'account-circle',
+  index: '🏠',
+  history: '🕓',
+  friends: '👥',
+  profile: '👤',
 };
 
 const TAB_LABELS: Record<string, string> = {
@@ -33,7 +31,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: TabBarP
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-        const iconName = TAB_ICONS[route.name] ?? 'circle';
+        const icon = TAB_ICONS[route.name] ?? '•';
         const label = TAB_LABELS[route.name] ?? route.name;
 
         const onPress = () => {
@@ -58,11 +56,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: TabBarP
             style={styles.tab}
             activeOpacity={0.7}
           >
-            <MaterialCommunityIcons
-              name={iconName as any}
-              size={24}
-              color={isFocused ? Theme.primary : Theme.muted}
-            />
+            <Text style={[styles.icon, { opacity: isFocused ? 1 : 0.7 }]}>{icon}</Text>
             <Text
               style={[
                 styles.label,
@@ -94,6 +88,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  icon: {
+    fontSize: 20,
   },
   label: {
     fontSize: 11,

@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Timer from '../../components/Timer';
 import { useChallengeStore } from '../../stores/challengeStore';
-import { Theme } from '../../constants/colors';
+import { Theme } from '../../constants/Colors';
 
 const PREP_SECONDS = 300; // 5 minutes
 

@@ -18,11 +18,24 @@ import { useAuthStore } from '@/stores/authStore';
 
 export default function SignInScreen() {
   const router = useRouter();
-  const { signIn } = useAuthStore();
+  const { signIn, signInWithGoogle } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+    const { error: googleError } = await signInWithGoogle();
+    setLoading(false);
+
+    if (googleError && googleError.message !== 'Google sign-in cancelled.') {
+      setError(googleError.message);
+    }
+  };
 
   const handleSignIn = async () => {
     setError('');
@@ -59,7 +72,7 @@ export default function SignInScreen() {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.googleButton} activeOpacity={0.8} onPress={handleGoogleSignIn}>
             <Text style={styles.googleIcon}>G</Text>
             <Text style={styles.googleText}>Continue with Google</Text>
           </TouchableOpacity>

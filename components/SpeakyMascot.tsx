@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 /** One frame size from the horizontal sprite sheet (3 poses: friendly, analytical, celebratory) */
 const FRAME_WIDTH = 300;
@@ -28,7 +28,7 @@ export default function SpeakyMascot({ pose = 'friendly', scale = 1 }: Props) {
   const fullWidth = FRAME_WIDTH * 3 * scale;
 
   return (
-    <View style={[styles.frame, styles.frameBg, { width, height }]} overflow="hidden">
+    <View style={[styles.frame, styles.frameBg, { width, height }]}>
       <Image
         source={require('../assets/speakup-mascot-transparent.png')}
         style={[

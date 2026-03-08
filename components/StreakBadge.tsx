@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 /** Streak flame color: white (0), orange (1–6), red (7–29), blue (30–99), purple (100+) */
 function getStreakColor(streak: number): string {
-  if (streak <= 0) return Theme.streak.none;
-  if (streak < 7) return Theme.streak.low;
-  if (streak < 30) return Theme.streak.medium;
-  if (streak < 100) return Theme.streak.high;
-  return Theme.streak.legendary;
+  if (streak <= 0) return Theme.streak.white;
+  if (streak < 7) return Theme.streak.orange;
+  if (streak < 30) return Theme.streak.red;
+  if (streak < 100) return Theme.streak.blue;
+  return Theme.streak.purple;
 }
 
 type Props = {

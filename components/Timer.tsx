@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 type Props = {
   totalSeconds: number;
