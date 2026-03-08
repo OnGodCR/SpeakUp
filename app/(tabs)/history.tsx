@@ -12,7 +12,7 @@ import { Text } from 'react-native-paper';
 
 import Speaky from '../../components/Speaky';
 import { useUserStore, SpeechHistory } from '../../stores/userStore';
-import { Theme } from '../../constants/colors';
+import { Theme } from '../../constants/Colors';
 
 function getScoreColor(score: number): string {
   if (score >= 80) return Theme.accent;

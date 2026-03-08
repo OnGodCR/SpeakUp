@@ -19,7 +19,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import { getXpProgress } from '../../constants/xpTable';
 import StreakBadge from '../../components/StreakBadge';
-import { Theme } from '../../constants/colors';
+import { Theme } from '../../constants/Colors';
 
 export default function ProfileScreen() {
   const user = useAuthStore((s) => s.user);

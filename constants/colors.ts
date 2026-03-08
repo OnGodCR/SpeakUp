@@ -1,30 +1,30 @@
 /**
- * SpeakUp brand palette — Duolingo-inspired design language
- * Primary #FF6B35 (orange), Secondary #1A2744 (deep navy), Accent #2BBFB0 (teal)
+ * SpeakUp brand palette — gamified + friendly
+ * Primary #6C3CE1 (purple), Accent #FF6B35 (orange)
  */
 export const Colors = {
-  primary: '#FF6B35',
-  secondary: '#1A2744',
-  accent: '#2BBFB0',
-  background: '#0F1624',
-  surface: '#1E2A3B',
-  text: '#FFFFFF',
-  muted: '#8899AA',
+  primary: '#6C3CE1',
+  secondary: '#F1EAFF',
+  accent: '#FF6B35',
+  background: '#F7F8FE',
+  surface: '#FFFFFF',
+  text: '#1E1B2E',
+  muted: '#7C7894',
   white: '#FFFFFF',
-  success: '#2BBFB0',
+  success: '#2BBF8A',
   error: '#EF4444',
   warning: '#F59E0B',
   streak: {
     none: '#FFFFFF',
     low: '#FF6B35',
-    medium: '#EF4444',
+    medium: '#FF4757',
     high: '#3B82F6',
-    legendary: '#8B5CF6',
+    legendary: '#6C3CE1',
   },
 };
 
-/** Card border / shadow tint (accent at 10% opacity) */
-export const cardBorderTint = 'rgba(43, 191, 176, 0.1)';
+/** Card border / shadow tint */
+export const cardBorderTint = 'rgba(108, 60, 225, 0.14)';
 
 /** Design tokens */
 export const Theme = {
@@ -34,11 +34,9 @@ export const Theme = {
     card: 16,
     button: 14,
     pill: 999,
-    /** Onboarding: extra-rounded "bubbly" elements */
     bubbly: 24,
     bubblyButton: 28,
   },
   progressBarHeight: 12,
-  /** Glow for progress fill (e.g. shadow) */
-  progressGlow: 'rgba(43, 191, 176, 0.4)',
+  progressGlow: 'rgba(255, 107, 53, 0.35)',
 } as const;

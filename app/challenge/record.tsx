@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Vibration } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Audio } from 'expo-av';
-import * as Haptics from 'expo-haptics';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -16,7 +15,7 @@ import Animated, {
 import Timer from '../../components/Timer';
 import { useChallengeStore } from '../../stores/challengeStore';
 import { setupRecording, stopRecording } from '../../lib/audio';
-import { Theme } from '../../constants/colors';
+import { Theme } from '../../constants/Colors';
 
 const RECORD_SECONDS = 300;
 const MIN_RECORD_SECONDS = 60;
@@ -90,7 +89,7 @@ export default function RecordScreen() {
     for (const threshold of HAPTIC_AT_REMAINING) {
       if (remaining === threshold && !hapticFiredRef.current.has(threshold)) {
         hapticFiredRef.current.add(threshold);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Vibration.vibrate(80);
       }
     }
   }, [elapsed]);

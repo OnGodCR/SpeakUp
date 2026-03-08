@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
-import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
+import { FontSize, FontWeight, Spacing } from '@/constants/theme';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import Speaky from '@/components/Speaky';
 
-const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -15,30 +15,24 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <Animated.View entering={FadeInDown.duration(600)} style={styles.heroSection}>
-        {/* Speaky mascot in card */}
         <Card style={styles.mascotCard} accent>
-          <Text style={styles.mascotEmoji}>{'\u{1F399}\uFE0F'}</Text>
-          <View style={styles.speechBubble}>
-            <View style={styles.speechArrow} />
-            <Text style={styles.speechText}>
-              Ready to become a speaker people actually listen to?
-            </Text>
-          </View>
+          <Speaky
+            pose="waving"
+            size={170}
+            message="Welcome to SpeakUp. I’m Speaky: part coach, part accountability gremlin."
+          />
         </Card>
 
         <Animated.Text entering={FadeInDown.duration(500).delay(200)} style={styles.title}>
           SpeakUp
         </Animated.Text>
         <Animated.Text entering={FadeInDown.duration(500).delay(350)} style={styles.subtitle}>
-          Your AI public speaking coach.{'\n'}Daily challenges. Real feedback. No judgment.
+          Your AI public speaking coach.{"\n"}Daily challenges. Real feedback. No judgment.
         </Animated.Text>
       </Animated.View>
 
       <Animated.View entering={FadeInUp.duration(500).delay(500)} style={styles.bottomSection}>
-        <Button
-          title="Get Started"
-          onPress={() => router.push('/(auth)/how-it-works')}
-        />
+        <Button title="Get Started" onPress={() => router.push('/(auth)/how-it-works')} />
         <Button
           title="I already have an account"
           onPress={() => router.push('/(auth)/sign-in')}
@@ -68,39 +62,6 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
     width: '100%',
-  },
-  mascotEmoji: {
-    fontSize: 80,
-    marginBottom: Spacing.md,
-  },
-  speechBubble: {
-    backgroundColor: Colors.background,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    width: '100%',
-    position: 'relative',
-  },
-  speechArrow: {
-    position: 'absolute',
-    top: -8,
-    alignSelf: 'center',
-    left: '50%',
-    marginLeft: -8,
-    width: 0,
-    height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: Colors.background,
-  },
-  speechText: {
-    color: Colors.textPrimary,
-    fontSize: FontSize.sm,
-    textAlign: 'center',
-    fontStyle: 'italic',
-    lineHeight: 22,
   },
   title: {
     fontSize: FontSize.hero,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import StreakBadge from './StreakBadge';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 type Props = {
   name: string;

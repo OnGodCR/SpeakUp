@@ -2,12 +2,11 @@ import { useEffect, useRef } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
-import { Theme } from '../../../constants/colors';
+import { Theme } from '../../../constants/Colors';
 
 /**
- * OAuth callback route. On web, Supabase redirects here with tokens in the URL hash.
- * The Supabase client (with detectSessionInUrl) parses the hash and sets the session.
- * We wait for the session and then redirect to the app.
+ * OAuth callback route. On web, Supabase redirects here after OAuth.
+ * We rely on the auth state listener/session check and redirect into the app once a session exists.
  */
 export default function AuthCallbackScreen() {
   const router = useRouter();

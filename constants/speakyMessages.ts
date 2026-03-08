@@ -85,6 +85,7 @@ export const celebration = {
 };
 
 export const streakBreak = [
+  "I waited all day for you... don't make me cry.",
   "Your streak ended, but your journey hasn't. Let's start a new one!",
   "Streaks break -- it happens to the best of us. What matters is coming back.",
   "Don't sweat it! A new streak starts with a single challenge.",
@@ -139,3 +140,34 @@ export function getLevelUpMessage(level: number): string {
   const template = pickRandom(levelUp);
   return template.replace('{level}', String(level));
 }
+
+
+export type SpeakyTone = 'supportive' | 'sarcastic' | 'witty';
+
+const homeToneMessages: Record<SpeakyTone, string[]> = {
+  supportive: [
+    "You've got this. One challenge today moves future-you forward.",
+    "Consistency beats intensity. Let's stack another win.",
+  ],
+  sarcastic: [
+    "Remember when you said you wanted to be a better speaker? I’m still here.",
+    "Sure, skip today's challenge. I'm sure your streak loves cliffhangers.",
+  ],
+  witty: [
+    "Your mic is ready and your excuses are outnumbered.",
+    "Let's make your awkward pauses feel intentionally dramatic.",
+  ],
+};
+
+export function getSpeakyHomeMessage(streakDays: number, tone: SpeakyTone = 'witty'): string {
+  if (tone === 'sarcastic') {
+    return "Remember when you said you wanted to be a better speaker? I’m still here.";
+  }
+
+  const opener = getGreeting(streakDays);
+  const tail = pickRandom(homeToneMessages[tone]);
+  return `${opener} ${tail}`;
+}
+
+
+export const scoreCardEncouragement = "Not bad for a human! Your strongest 15 seconds was that opening hook—keep that energy.";

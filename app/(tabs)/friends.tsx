@@ -11,7 +11,7 @@ import { Text, TextInput } from 'react-native-paper';
 import FriendRow from '../../components/FriendRow';
 import Speaky from '../../components/Speaky';
 import { fetchFriendsActivity, FriendActivity } from '../../lib/api';
-import { Theme } from '../../constants/colors';
+import { Theme } from '../../constants/Colors';
 
 export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendActivity[]>([]);
@@ -89,7 +89,6 @@ export default function FriendsScreen() {
           textColor={Theme.text}
           outlineColor={Theme.surface}
           activeOutlineColor={Theme.accent}
-          backgroundColor={Theme.surface}
         />
       </View>
 

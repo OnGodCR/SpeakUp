@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 function getScoreColor(score: number): string {
   if (score < 50) return '#EF4444';

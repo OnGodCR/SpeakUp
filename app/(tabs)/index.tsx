@@ -1,122 +1,123 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import Animated, {
-  FadeInDown,
-  FadeInRight,
-} from 'react-native-reanimated';
+import React, { useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
 import { Colors, getStreakColor } from '@/constants/Colors';
-import { BorderRadius, FontSize, FontWeight, Spacing, Shadow } from '@/constants/theme';
+import { BorderRadius, FontSize, FontWeight, Spacing } from '@/constants/theme';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { StreakFlame } from '@/components/ui/StreakFlame';
+import Speaky from '@/components/Speaky';
+import { getSpeakyHomeMessage } from '@/constants/speakyMessages';
+import { useChallengeStore } from '@/stores/challengeStore';
+import { useUserStore } from '@/stores/userStore';
 
-const { width } = Dimensions.get('window');
+const FRIEND_ACTIVITY = [
+  { name: 'Alex', score: 85, streak: 14 },
+  { name: 'Jordan', score: 72, streak: 7 },
+  { name: 'Sam', score: 91, streak: 23 },
+  { name: 'Riley', score: 68, streak: 3 },
+];
 
 export default function HomeScreen() {
-  // Placeholder data — will be wired to stores later
-  const streak = 12;
-  const xp = 2450;
-  const todayScore = 78;
-  const weeklyAvg = 82;
+  const router = useRouter();
+
+  const challenge = useChallengeStore((s) => s.challenge);
+  const isChallengeLoading = useChallengeStore((s) => s.isLoading);
+  const fetchChallenge = useChallengeStore((s) => s.fetchChallenge);
+
+  const profile = useUserStore((s) => s.profile);
+  const userLoading = useUserStore((s) => s.isLoading);
+  const fetchProfile = useUserStore((s) => s.fetchProfile);
+
+  const streak = profile?.current_streak ?? 0;
+  const xp = profile?.total_xp ?? 0;
+
+  useEffect(() => {
+    fetchProfile().catch(() => {});
+    fetchChallenge().catch(() => {});
+  }, [fetchProfile, fetchChallenge]);
+
+  const coachMessage = useMemo(() => getSpeakyHomeMessage(streak, 'sarcastic'), [streak]);
+  const mascotPose = isChallengeLoading ? 'thinking' : 'waving';
+
+  const handleStartChallenge = () => {
+    if (!challenge) return;
+    router.push('/challenge/prep');
+  };
+
+  const onRefresh = async () => {
+    await Promise.allSettled([fetchProfile(), fetchChallenge()]);
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header Row */}
-      <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={<RefreshControl refreshing={isChallengeLoading || userLoading} onRefresh={onRefresh} />}
+      showsVerticalScrollIndicator={false}
+    >
+      <Animated.View entering={FadeInDown.duration(350)} style={styles.header}>
         <View style={styles.avatarCircle}>
-          <Text style={styles.avatarText}>{'\u{1F464}'}</Text>
+          <Text style={styles.avatarText}>🎯</Text>
         </View>
 
         <Badge bgColor={Colors.surface} style={styles.streakBadge}>
           <StreakFlame days={streak} size={20} />
-          <Text style={[styles.streakCount, { color: getStreakColor(streak) }]}>
-            {streak}
-          </Text>
+          <Text style={[styles.streakCount, { color: getStreakColor(streak) }]}>{streak}</Text>
         </Badge>
 
-        <Badge bgColor={Colors.primary + '20'} style={styles.xpBadge}>
-          <Text style={styles.xpText}>{'\u{26A1}'} {xp} XP</Text>
+        <Badge bgColor={Colors.secondary} style={styles.xpBadge}>
+          <Text style={styles.xpText}>⚡ {xp} XP</Text>
         </Badge>
       </Animated.View>
 
-      {/* Speaky Mascot Card */}
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(350).delay(80)}>
         <Card style={styles.speakyCard} accent>
           <View style={styles.speakyRow}>
-            <Text style={styles.speakyEmoji}>{'\u{1F399}\uFE0F'}</Text>
+            <Speaky pose={mascotPose} size={114} showBubble={false} />
             <View style={styles.speechBubble}>
               <View style={styles.speechArrow} />
-              <Text style={styles.speakyMessage}>
-                Your {streak}-day streak is on the line. Do it for us. {'\u{1FAE1}'}
-              </Text>
+              <Text style={styles.speakyMessage}>{coachMessage}</Text>
             </View>
           </View>
         </Card>
       </Animated.View>
 
-      {/* Daily Challenge Card — Hero CTA */}
-      <Animated.View entering={FadeInDown.duration(400).delay(200)}>
-        <TouchableOpacity activeOpacity={0.85}>
-          <Card style={styles.challengeCard}>
-            <Text style={styles.challengeLabel}>TODAY'S CHALLENGE</Text>
-            <Text style={styles.challengeTopic}>
-              "Convince your team to adopt a 4-day work week"
-            </Text>
-            <Badge
-              bgColor={Colors.accent + '20'}
-              color={Colors.accent}
-              style={styles.categoryPill}
-            >
-              <Text style={styles.categoryText}>Persuasive</Text>
-              <Text style={styles.categoryDot}>{'\u00B7'}</Text>
-              <Text style={styles.categoryText}>2-3 min</Text>
-            </Badge>
-            <TouchableOpacity style={styles.startButton} activeOpacity={0.8}>
-              <Text style={styles.startButtonText}>Start Challenge</Text>
-            </TouchableOpacity>
-          </Card>
-        </TouchableOpacity>
-      </Animated.View>
+      <Animated.View entering={FadeInDown.duration(350).delay(140)}>
+        <Card style={styles.challengeCard}>
+          <Text style={styles.challengeLabel}>TODAY'S CHALLENGE</Text>
+          <Text style={styles.challengeTopic}>{challenge?.topic ?? 'Loading your challenge...'}</Text>
 
-      {/* Quick Stats Row */}
-      <Animated.View entering={FadeInDown.duration(400).delay(300)} style={styles.statsRow}>
-        <Card style={styles.statCard}>
-          <StreakFlame days={streak} size={24} />
-          <Text style={styles.statCardValue}>{streak}</Text>
-          <Text style={styles.statCardLabel}>Day Streak</Text>
-        </Card>
-        <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>{'\u{1F3AF}'}</Text>
-          <Text style={styles.statCardValue}>{todayScore}</Text>
-          <Text style={styles.statCardLabel}>Today's Score</Text>
-        </Card>
-        <Card style={styles.statCard}>
-          <Text style={styles.statIcon}>{'\u{1F4C8}'}</Text>
-          <Text style={styles.statCardValue}>{weeklyAvg}</Text>
-          <Text style={styles.statCardLabel}>Weekly Avg</Text>
+          <Badge bgColor={Colors.secondary} color={Colors.primary} style={styles.categoryPill}>
+            <Text style={styles.categoryText}>{challenge?.category ?? 'Daily Drill'}</Text>
+            <Text style={styles.categoryDot}>·</Text>
+            <Text style={styles.categoryText}>{challenge?.difficulty_tier ?? '2-3 min'}</Text>
+          </Badge>
+
+          <TouchableOpacity
+            style={[styles.startButton, !challenge && styles.startButtonDisabled]}
+            activeOpacity={0.85}
+            onPress={handleStartChallenge}
+            disabled={!challenge}
+          >
+            <Text style={styles.startButtonText}>{challenge ? 'Start Challenge' : 'Preparing...'}</Text>
+          </TouchableOpacity>
         </Card>
       </Animated.View>
 
-      {/* Friend Activity */}
-      <Animated.View entering={FadeInDown.duration(400).delay(400)}>
-        <Text style={styles.sectionTitle}>Friend Activity</Text>
+      <Animated.View entering={FadeInDown.duration(350).delay(200)}>
+        <Text style={styles.sectionTitle}>Friends Activity</Text>
       </Animated.View>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.friendScroll}
         contentContainerStyle={styles.friendScrollContent}
       >
-        {[
-          { name: 'Alex', score: 85, streak: 14 },
-          { name: 'Jordan', score: 72, streak: 7 },
-          { name: 'Sam', score: 91, streak: 23 },
-          { name: 'Riley', score: 68, streak: 3 },
-        ].map((friend, i) => (
-          <Animated.View
-            key={friend.name}
-            entering={FadeInRight.duration(300).delay(500 + i * 80)}
-          >
+        {FRIEND_ACTIVITY.map((friend, i) => (
+          <Animated.View key={friend.name} entering={FadeInRight.duration(280).delay(250 + i * 70)}>
             <Card style={styles.friendChip}>
               <View style={styles.friendAvatar}>
                 <Text style={styles.friendAvatarText}>{friend.name[0]}</Text>
@@ -141,28 +142,26 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: 60,
-    paddingBottom: 100,
+    paddingTop: 58,
+    paddingBottom: 120,
+    gap: Spacing.md,
   },
-
-  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.lg,
   },
   avatarCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: Colors.accent,
+    borderColor: Colors.primary + '40',
   },
   avatarText: {
-    fontSize: 22,
+    fontSize: 23,
   },
   streakBadge: {
     marginLeft: 'auto',
@@ -182,10 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     fontSize: FontSize.sm,
   },
-
-  // Speaky
   speakyCard: {
-    marginBottom: Spacing.lg,
     padding: Spacing.md,
   },
   speakyRow: {
@@ -193,12 +189,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: Spacing.sm,
   },
-  speakyEmoji: {
-    fontSize: 44,
-  },
   speechBubble: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     position: 'relative',
@@ -214,21 +207,16 @@ const styles = StyleSheet.create({
     borderRightWidth: 8,
     borderTopColor: 'transparent',
     borderBottomColor: 'transparent',
-    borderRightColor: Colors.background,
+    borderRightColor: Colors.secondary,
   },
   speakyMessage: {
     color: Colors.textPrimary,
     fontSize: FontSize.sm,
-    fontStyle: 'italic',
     lineHeight: 22,
+    fontStyle: 'italic',
   },
-
-  // Challenge Card
   challengeCard: {
-    marginBottom: Spacing.lg,
     padding: Spacing.lg,
-    backgroundColor: Colors.secondary,
-    borderColor: Colors.surfaceBorder,
   },
   challengeLabel: {
     color: Colors.primary,
@@ -241,7 +229,7 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     fontSize: FontSize.xl,
     fontWeight: FontWeight.bold,
-    lineHeight: 32,
+    lineHeight: 31,
     marginBottom: Spacing.md,
   },
   categoryPill: {
@@ -251,12 +239,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   categoryText: {
-    color: Colors.accent,
+    color: Colors.primary,
     fontSize: FontSize.sm,
     fontWeight: FontWeight.semibold,
   },
   categoryDot: {
-    color: Colors.accent,
+    color: Colors.primary,
     fontSize: FontSize.sm,
   },
   startButton: {
@@ -265,53 +253,21 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md + 2,
     alignItems: 'center',
     width: '100%',
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 5,
+  },
+  startButtonDisabled: {
+    opacity: 0.6,
   },
   startButtonText: {
-    color: Colors.textPrimary,
+    color: '#FFFFFF',
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
     letterSpacing: 0.3,
   },
-
-  // Stats Row
-  statsRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginBottom: Spacing.lg,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm,
-  },
-  statIcon: {
-    fontSize: 24,
-  },
-  statCardValue: {
-    color: Colors.textPrimary,
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.black,
-    marginTop: Spacing.xs,
-  },
-  statCardLabel: {
-    color: Colors.textMuted,
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.medium,
-    marginTop: 4,
-  },
-
-  // Friends
   sectionTitle: {
     color: Colors.textPrimary,
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.xs,
   },
   friendScroll: {
     marginHorizontal: -Spacing.lg,
@@ -324,7 +280,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
-    width: 100,
+    width: 102,
   },
   friendAvatar: {
     width: 44,

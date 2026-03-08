@@ -1,24 +1,39 @@
 export const Colors = {
-  primary: '#FF6B35',
-  secondary: '#1A2744',
-  accent: '#2BBFB0',
-  background: '#0F1624',
-  surface: '#1E2A3B',
-  surfaceBorder: 'rgba(43, 191, 176, 0.10)',
-  textPrimary: '#FFFFFF',
-  textMuted: '#8899AA',
+  primary: '#6C3CE1',
+  secondary: '#F1EAFF',
+  accent: '#FF6B35',
+  background: '#F7F8FE',
+  surface: '#FFFFFF',
+  surfaceBorder: 'rgba(108, 60, 225, 0.14)',
+  textPrimary: '#1E1B2E',
+  textMuted: '#7C7894',
   error: '#FF4757',
-  success: '#2BBFB0',
+  success: '#2BBF8A',
   warning: '#FFD93D',
-
-  // Streak flame colors by length
   streak: {
-    white: '#FFFFFF',    // 0 days
-    orange: '#FF6B35',   // 1-6 days
-    red: '#FF4757',      // 7-29 days
-    blue: '#3B82F6',     // 30-99 days
-    purple: '#8B5CF6',   // 100+ days
+    white: '#FFFFFF',
+    orange: '#FF6B35',
+    red: '#FF4757',
+    blue: '#3B82F6',
+    purple: '#6C3CE1',
   },
+} as const;
+
+export const Theme = {
+  ...Colors,
+  text: Colors.textPrimary,
+  muted: Colors.textMuted,
+  white: '#FFFFFF',
+  cardBorderTint: Colors.surfaceBorder,
+  radius: {
+    card: 16,
+    button: 14,
+    pill: 999,
+    bubbly: 24,
+    bubblyButton: 28,
+  },
+  progressBarHeight: 12,
+  progressGlow: 'rgba(255, 107, 53, 0.35)',
 } as const;
 
 export function getStreakColor(days: number): string {
@@ -29,7 +44,6 @@ export function getStreakColor(days: number): string {
   return Colors.streak.white;
 }
 
-// For legacy compatibility with template imports
 export default {
   light: {
     text: Colors.textPrimary,

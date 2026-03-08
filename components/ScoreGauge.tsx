@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { Theme } from '../constants/colors';
+import { Theme } from '../constants/Colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
