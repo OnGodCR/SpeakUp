@@ -7,7 +7,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Button } from 'react-native-paper';
+import { Text, Button, List, ActivityIndicator } from 'react-native-paper';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -29,6 +29,7 @@ export default function ProfileScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile().catch(() => {});
@@ -41,12 +42,15 @@ export default function ProfileScreen() {
   }, [fetchProfile]);
 
   const handleSignOut = async () => {
+    setSignOutError(null);
     setSigningOut(true);
-    try {
-      await signOut();
-    } catch {
-      setSigningOut(false);
+
+    const { error } = await signOut();
+    if (error) {
+      setSignOutError(error.message || 'Unable to sign out. Please try again.');
     }
+
+    setSigningOut(false);
   };
 
   const displayName =
@@ -141,6 +145,22 @@ export default function ProfileScreen() {
             </View>
           </View>
         ) : null}
+
+        <View style={styles.menuCard}>
+          <Text style={styles.menuTitle}>Settings</Text>
+          <List.Item
+            title="Sign Out from this device"
+            description="Alternative sign-out path for QA"
+            onPress={handleSignOut}
+            disabled={signingOut}
+            left={(props) => <List.Icon {...props} icon="logout" />}
+            right={() =>
+              signingOut ? <ActivityIndicator size={16} color={Theme.muted} /> : null
+            }
+          />
+        </View>
+
+        {signOutError ? <Text style={styles.errorText}>{signOutError}</Text> : null}
 
         <Button
           mode="outlined"
@@ -325,6 +345,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Theme.muted,
     marginTop: 2,
+  },
+
+  menuCard: {
+    backgroundColor: Theme.surface,
+    borderRadius: Theme.radius.card,
+    borderWidth: 1,
+    borderColor: Theme.cardBorderTint,
+    marginBottom: 16,
+  },
+  menuTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Theme.text,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 13,
+    marginBottom: 12,
+    fontWeight: '500',
   },
 
   signOutButton: {
