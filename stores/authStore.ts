@@ -11,7 +11,7 @@ interface AuthState {
   setHasOnboarded: (value: boolean) => void;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: Error | null }>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -36,7 +36,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
-    await supabase.auth.signOut();
-    set({ session: null, user: null });
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      set({ session: null, user: null });
+      return { error: null };
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error
+            ? error
+            : new Error('Unable to sign out. Please try again.'),
+      };
+    }
   },
 }));
