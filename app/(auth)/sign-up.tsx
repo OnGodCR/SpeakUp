@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -16,14 +16,49 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuthStore } from '@/stores/authStore';
 
+type ResendFeedback = {
+  type: 'success' | 'error';
+  message: string;
+};
+
 export default function SignUpScreen() {
   const router = useRouter();
-  const { signUp } = useAuthStore();
+  const { signUp, resendSignUpConfirmation } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successEmail, setSuccessEmail] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendFeedback, setResendFeedback] = useState<ResendFeedback | null>(null);
+  const [resendCooldownUntil, setResendCooldownUntil] = useState<number | null>(null);
+  const [now, setNow] = useState(Date.now());
+
+  const RESEND_DEFAULT_COOLDOWN_SECONDS = 30;
+
+  useEffect(() => {
+    if (!resendCooldownUntil) return;
+
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldownUntil]);
+
+  const resendSecondsRemaining = useMemo(() => {
+    if (!resendCooldownUntil) return 0;
+
+    return Math.max(0, Math.ceil((resendCooldownUntil - now) / 1000));
+  }, [resendCooldownUntil, now]);
+
+  const getRateLimitCooldownSeconds = (message: string) => {
+    const secondMatch = message.match(/(\d+)\s*seconds?/i);
+    if (secondMatch) return Number(secondMatch[1]);
+
+    const minuteMatch = message.match(/(\d+)\s*minutes?/i);
+    if (minuteMatch) return Number(minuteMatch[1]) * 60;
+
+    return null;
+  };
 
   const handleSignUp = async () => {
     setError('');
@@ -42,14 +77,100 @@ export default function SignUpScreen() {
     }
 
     setLoading(true);
-    const { error: signUpError } = await signUp(email, password);
+    const { error: signUpError, requiresEmailConfirmation } = await signUp(email, password);
     setLoading(false);
 
     if (signUpError) {
       setError(signUpError.message);
+      return;
+    }
+
+    if (requiresEmailConfirmation) {
+      setSuccessEmail(email);
+      setResendFeedback(null);
+      setResendCooldownUntil(null);
+      return;
     }
     // Auth listener in root layout will handle navigation on success
   };
+
+  const handleResendConfirmation = async () => {
+    if (!successEmail || resendLoading || resendSecondsRemaining > 0) return;
+
+    setResendFeedback(null);
+    setResendLoading(true);
+    const { error: resendError } = await resendSignUpConfirmation(successEmail);
+    setResendLoading(false);
+
+    if (resendError) {
+      setResendFeedback({ type: 'error', message: resendError.message });
+
+      const cooldownFromError =
+        getRateLimitCooldownSeconds(resendError.message) ??
+        ((resendError as { status?: number }).status === 429
+          ? RESEND_DEFAULT_COOLDOWN_SECONDS
+          : null);
+
+      if (cooldownFromError) {
+        setResendCooldownUntil(Date.now() + cooldownFromError * 1000);
+      }
+      return;
+    }
+
+    setResendCooldownUntil(Date.now() + RESEND_DEFAULT_COOLDOWN_SECONDS * 1000);
+    setResendFeedback({
+      type: 'success',
+      message: 'Confirmation email sent. Please check your inbox.',
+    });
+  };
+
+  if (successEmail) {
+    return (
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.successContainer}>
+          <Text style={styles.emoji}>{'\u{2709}'} </Text>
+          <Text style={styles.title}>Check your email to verify your account.</Text>
+          <Text style={styles.subtitle}>
+            We sent a confirmation link to {successEmail}.
+          </Text>
+
+          {resendFeedback ? (
+            <Text
+              style={[
+                styles.resendStatusText,
+                resendFeedback.type === 'success' ? styles.successText : styles.errorText,
+              ]}
+            >
+              {resendFeedback.message}
+            </Text>
+          ) : null}
+
+          <Button
+            title={
+              resendSecondsRemaining > 0
+                ? `Resend confirmation (${resendSecondsRemaining}s)`
+                : 'Resend confirmation'
+            }
+            onPress={handleResendConfirmation}
+            loading={resendLoading}
+            disabled={resendLoading || resendSecondsRemaining > 0}
+            style={{ marginTop: Spacing.lg }}
+          />
+
+          <TouchableOpacity
+            onPress={() => router.replace('/(auth)/sign-in')}
+            style={styles.backToSignInButton}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.footerLink}>Back to sign in</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -200,6 +321,25 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     textAlign: 'center',
     marginTop: Spacing.sm,
+  },
+  successContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  resendStatusText: {
+    fontSize: FontSize.sm,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+  },
+  successText: {
+    color: Colors.success,
+  },
+  backToSignInButton: {
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   footerRow: {
     flexDirection: 'row',

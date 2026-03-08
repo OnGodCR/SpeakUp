@@ -9,7 +9,11 @@ interface AuthState {
   hasOnboarded: boolean;
   setSession: (session: Session | null) => void;
   setHasOnboarded: (value: boolean) => void;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string
+  ) => Promise<{ error: Error | null; requiresEmailConfirmation: boolean }>;
+  resendSignUpConfirmation: (email: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -26,7 +30,20 @@ export const useAuthStore = create<AuthState>((set) => ({
   setHasOnboarded: (value) => set({ hasOnboarded: value }),
 
   signUp: async (email, password) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    return {
+      error: error as Error | null,
+      requiresEmailConfirmation: Boolean(data.user) && !data.session,
+    };
+  },
+
+  resendSignUpConfirmation: async (email) => {
+    const { error } = await supabase.auth.resend({
+      email,
+      type: 'signup',
+    });
+
     return { error: error as Error | null };
   },
 
